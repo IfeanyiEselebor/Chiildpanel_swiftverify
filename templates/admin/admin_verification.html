@@ -1,0 +1,142 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Pool Labels{% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/plugins/notyf/notyf.min.css">
+{% endblock %}
+{% block main_content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-tags"></i>&nbsp;&nbsp;Pool Labels
+        </h3>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-info">
+          <strong>What this does</strong>
+          <p class="mb-0 small">
+            The parent platform exposes its providers under codenames (<code>Alpha</code>…<code>Foxtrot</code>). Use this page to:
+          </p>
+          <ul class="mb-0 small">
+            <li><strong>Rename</strong> what your users see (e.g. <code>Alpha</code> → "Premium US Numbers").</li>
+            <li><strong>Hide</strong> pools you don't want to offer.</li>
+            <li><strong>Reorder</strong> how they appear in the dropdown (lower number = higher in the list).</li>
+          </ul>
+          <p class="mb-0 small mt-2 text-muted">
+            The API call always uses the canonical codename — your changes are display-only.
+          </p>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-bordered" id="pool-table">
+            <thead class="thead-light">
+              <tr>
+                <th style="width:120px;">Codename</th>
+                <th>Display Name</th>
+                <th style="width:120px;">Sort Order</th>
+                <th style="width:120px;text-align:center;">Enabled</th>
+                <th style="width:140px;text-align:center;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for pool in pools %}
+              <tr data-codename="{{ pool.codename }}">
+                <td><code style="font-weight:600;">{{ pool.codename }}</code></td>
+                <td>
+                  <input type="text" class="form-control display-name-input"
+                         value="{{ pool.display_name }}" maxlength="100"
+                         data-original="{{ pool.display_name }}">
+                </td>
+                <td>
+                  <input type="number" class="form-control sort-order-input"
+                         value="{{ pool.sort_order }}" min="0" max="999"
+                         data-original="{{ pool.sort_order }}">
+                </td>
+                <td style="text-align:center;vertical-align:middle;">
+                  <input type="checkbox" class="enabled-toggle"
+                         data-original="{{ pool.enabled }}"
+                         {% if pool.enabled %}checked{% endif %}>
+                </td>
+                <td style="text-align:center;">
+                  <button type="button" class="btn btn-sm btn-success save-pool-btn">
+                    <i class="fas fa-save"></i> Save
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+              {% if not pools %}
+              <tr>
+                <td colspan="5" class="text-center text-muted">
+                  No pools seeded yet — run deploy_migrations.sql.
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="/static/plugins/notyf/notyf.min.js"></script>
+<script>
+  var notyf = new Notyf({
+    duration: 3000,
+    position: { x: 'right', y: 'top' },
+    types: [
+      { type: 'success', background: '#28a745' },
+      { type: 'error',   background: '#dc3545' }
+    ]
+  });
+
+  document.querySelectorAll('.save-pool-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var row = btn.closest('tr');
+      var codename = row.getAttribute('data-codename');
+      var nameInput = row.querySelector('.display-name-input');
+      var sortInput = row.querySelector('.sort-order-input');
+      var enabledInput = row.querySelector('.enabled-toggle');
+
+      var payload = { codename: codename };
+      if (nameInput.value.trim() !== nameInput.dataset.original) {
+        payload.display_name = nameInput.value.trim();
+      }
+      if (sortInput.value !== sortInput.dataset.original) {
+        payload.sort_order = sortInput.value;
+      }
+      var enabledNow = enabledInput.checked ? '1' : '0';
+      if (enabledNow !== enabledInput.dataset.original) {
+        payload.enabled = enabledNow;
+      }
+
+      if (Object.keys(payload).length === 1) {
+        notyf.open({ type: 'error', message: 'No changes to save.' });
+        return;
+      }
+
+      btn.disabled = true;
+      fetch('/admin/pools/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(r) {
+        if (r.status === 'success') {
+          nameInput.dataset.original = nameInput.value.trim();
+          sortInput.dataset.original = sortInput.value;
+          enabledInput.dataset.original = enabledNow;
+          notyf.success(codename + ' saved.');
+        } else {
+          notyf.error(r.message || 'Save failed.');
+        }
+      })
+      .catch(function() { notyf.error('Network error.'); })
+      .finally(function() { btn.disabled = false; });
+    });
+  });
+</script>
+{% endblock %}

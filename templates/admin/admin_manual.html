@@ -1,0 +1,288 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Manual Funding{% endblock %}
+{% block head %}
+      <!-- DataTables -->
+  <link rel="stylesheet" href="/static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Notyf CSS File -->
+    <link rel="stylesheet" type="text/css" href="/static/plugins/notyf/notyf.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <style>
+        .receipt-image {
+            max-width: 100%;
+            max-height: 70vh; /* Adjust this value as needed */
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+        #receiptmodal .modal-body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+    </style>
+{% endblock %}
+{% block main_content %}
+    <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12">
+                    <table class="table table-bordered datatable display responsive nowrap" id="manual_funds" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th scope="col"><b>ID</b></th>
+                             <th data-type="date" data-format="YYYY/DD/MM" scope="col">Date</th>
+                             <th scope="col">Amount</th>
+                             <th scope="col">Sender's Name</th>
+                             <th scope="col">Receipt</th>
+                             <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="top-sales">
+                    </tbody>
+                  </table>
+                  <!-- /.top-selling -->
+                  </div>
+                  <!-- /.col -->
+                </div>
+                <!-- /.row -->
+              </div>
+              <!-- ./card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+    <div class="modal fade" id="receiptmodal" aria-hidden="true" aria-labelledby="receiptmodalLabel" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="receiptmodalLabel">View Receipt #<span id="transaction_receipt_id"></span></h5>
+              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>`
+            <div class="modal-body">
+                <img id="transaction_receipt" class="img-fluid receipt-image"  alt="No Receipt Uploaded">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="modal fade" id="modal_Confirm" aria-hidden="true" aria-labelledby="modal_ConfirmLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modal_ConfirmLabel">Confirm Transaction</h5>
+              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure, you have received ₦<span id="trans_amount"></span> from <span id="trans_sender_name"></span>
+            </div>
+            <input type="hidden" name="transaction_id" value="">
+            <div class="modal-footer">
+                <button id="btnYesConfirmYes"
+                type="button" class="btn btn-success">Yes</button>
+                <button id="btnNoConfirmNo"
+                type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+            </div>
+            </div>
+          </div>
+    </div>
+    <div class="modal fade" id="modal_decline" aria-hidden="true" aria-labelledby="modal_declineLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modal_declineLabel">Decline Transaction</h5>
+              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label class="mb-2">Reason:</label>
+                <input class="form-control py-1" name="reason" id="reason">
+                <input type="hidden" name="transaction_id" value="">
+            </div>
+            <div class="modal-footer">
+                <button
+                id="btnSubmit"
+                type="button" class="btn btn-success">Submit</button>
+                <button id="btnNoConfirmNo"
+                type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+            </div>
+          </div>
+    </div>
+    <!-- /.row -->
+{% endblock %}
+{% block script %}
+    <!-- Datatables JS File -->
+    <script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <!-- Notyf JS File -->
+    <script src="/static/plugins/notyf/notyf.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Notification setup
+        const notyf = new Notyf({
+            duration: 1000,
+            position: {x: 'right', y: 'top'},
+            types: [
+                {
+                    type: "warning",
+                    backgroundColor: "#ffc107",
+                    icon: {
+                        className: "notyf__icon--error",
+                        tagName: "i"
+                    }
+                }
+            ]
+        });
+        /* Initiate Datatables */
+        var table = $('#manual_funds').DataTable({
+          responsive: true,
+          ajax: {
+            type: "GET",
+            url: '/view_pending_funds',
+            dataSrc: function(json) {
+              // Check if the response was successful
+              if (json['status'] === "Login Required") {
+                /* Reload Page */
+                location.reload();
+              } else {
+                return json.data;
+              }
+            }
+          },
+          columns: [
+            { data: 'id' },
+            { data: 'date' },
+            { data: 'amount' },
+            { data: 'sender_name' },
+            { data: 'view_receipt' },
+            { data: 'action' }
+          ],
+            order: [[1, "desc"]],
+            columnDefs: [
+            {
+                targets: 1, // Target the date column
+                type: 'date' // Specify that this column contains date data
+            }
+        ]
+        });
+        var table_reload;
+        // Set interval to reload the table every 3 seconds
+        table_reload= setInterval(function() {
+          table.ajax.reload();
+        }, 60000);
+        // To run the javascript function
+        $(document).on("click", "#view-btn", function(){
+            $('#transaction_receipt').attr('src', window.location.origin + '/static/uploads/' +$(this).data('image_path'));
+            $('#transaction_receipt_id').text($(this).data('transaction_id'));
+            // Clear any existing interval
+            clearInterval(table_reload);
+            $("#receiptmodal").modal("show");
+        });
+        $("#receiptmodal").on('hidden.bs.modal', function(event) {
+            // Set interval to reload the table every 60 seconds
+            table_reload = setInterval(function() {
+              table.ajax.reload();
+            }, 60000);
+        });
+        $(document).on("click", "#approve-btn", function(){
+            document.getElementById("approve-btn").disabled = true;
+            $("input[name='transaction_id']").val($(this).data('transaction_id'));
+            $('#trans_amount').text($(this).data('amount'));
+            $('#trans_sender_name').text($(this).data('sender_name'));
+             // Clear any existing interval
+             clearInterval(table_reload);
+            $("#modal_Confirm").modal("show");
+        });
+        $("#modal_Confirm").on('hidden.bs.modal', function(event) {
+            if (document.getElementById("approve-btn")) {
+                document.getElementById("approve-btn").disabled = false;
+            }
+            // Set interval to reload the table every 60 seconds
+            table_reload = setInterval(function() {
+              table.ajax.reload();
+            }, 60000);
+        });
+        $(document).on("click", "#btnYesConfirmYes", function(){
+            // Clear any existing interval
+            clearInterval(table_reload);
+            var form_data = new FormData();
+            form_data.append("transactionId", $("input[name='transaction_id']").val())
+            $.ajax({
+                type: "POST",
+                url: "/manual_fund",
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form_data,
+                success: function (response) {
+                  notyf.success({ message: response['message'], duration: 5000});
+                  table.ajax.reload();
+                  table_reload = setInterval(function() {
+                      table.ajax.reload();
+                  }, 60000);
+                  $("input[name='reason']").val('')
+                },
+                error: function (response) {
+                    console.log(response['message']);
+                }
+            });
+            $("#modal_Confirm").modal("hide");
+        });
+        $(document).on("click", "#disapprove-btn", function(){
+            // Clear any existing interval
+            clearInterval(table_reload);
+            document.getElementById("disapprove-btn").disabled = true;
+            $("input[name='transaction_id']").val($(this).data('transaction_id'));
+            $("#modal_decline").modal("show");
+        });
+        $("#modal_decline").on('hidden.bs.modal', function(event) {
+            if (document.getElementById("disapprove-btn")) {
+                document.getElementById("disapprove-btn").disabled = false;
+            }
+            $("input[name='reason']").val('')
+            // Set interval to reload the table every 60 seconds
+            table_reload = setInterval(function() {
+              table.ajax.reload();
+            }, 60000);
+        });
+        $(document).on("click", "#btnSubmit", function(){
+            var form_data = new FormData();
+            form_data.append("transactionId", $("input[name='transaction_id']").val())
+            form_data.append("reason", $("input[name='reason']").val())
+            $.ajax({
+                type: "POST",
+                url: "/decline_funding",
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form_data,
+                success: function (response) {
+                    notyf.success({ message: response['message'], duration: 5000});
+                    table.ajax.reload();
+                    table_reload = setInterval(function() {
+                        table.ajax.reload();
+                    }, 60000);
+                    $("input[name='reason']").val('')
+                },
+                error: function (response) {
+                    console.log(response['message']);
+                }
+            });
+            $("#modal_decline").modal("hide");
+        });
+    })
+    </script>
+{% endblock %}

@@ -1,0 +1,87 @@
+{
+    "_comment": "Site Config",
+    "SITE_INSTALLED": "1",
+    "PARENT_API_BASE": "https://swiftverifyng.com",
+    "SITE_NAME": "DiberrySMS",
+    "SITE_LOGO": "static/uploads/Diberry.png",
+    "SITE_FAVICON": "static/uploads/Diberry.png",
+    "SITE_SUPPORT_EMAIL": "support@diberrysms.com",
+    "SITE_DOMAIN": "diberrysms.com",
+    "CURRENT_THEME": "THEME_1",
+    "reviews": [
+        {
+            "user": "Aisha Bello",
+            "location": "Abuja, Nigeria",
+            "rating": 4,
+            "comment": "Very reliable SMS verification service. It works well for Facebook and Twitter, but sometimes numbers are out of stock."
+        },
+        {
+            "user": "Emeka Okafor",
+            "location": "Enugu, Nigeria",
+            "rating": 5,
+            "comment": "Fast and secure! I use it regularly for online banking and it has never failed me. Great job!"
+        },
+        {
+            "user": "Fatima Sani",
+            "location": "Kano, Nigeria",
+            "rating": 4,
+            "comment": "Good experience overall. Customer support was responsive when I had issues with receiving an OTP."
+        },
+        {
+            "user": "Tunde Balogun",
+            "location": "Ibadan, Nigeria",
+            "rating": 5,
+            "comment": "Affordable and efficient! I can now create multiple online accounts without worrying about exposing my personal number."
+        },
+        {
+            "user": "Chioma Eze",
+            "location": "Port Harcourt, Nigeria",
+            "rating": 5,
+            "comment": "A lifesaver for my e-commerce business! I use this service to verify customers without any issues."
+        },
+        {
+            "user": "Segun Alabi",
+            "location": "Benin City, Nigeria",
+            "rating": 4,
+            "comment": "Works well for most platforms. I had trouble with one service, but overall, it's a great verification tool."
+        },
+        {
+            "user": "Blessing Udoh",
+            "location": "Uyo, Nigeria",
+            "rating": 5,
+            "comment": "The best SMS verification service I've used in Nigeria. Quick and easy to get OTPs!"
+        },
+        {
+            "user": "David Onyekachi",
+            "location": "Owerri, Nigeria",
+            "rating": 5,
+            "comment": "Perfect for anonymous online registration. It works flawlessly with Telegram and Instagram."
+        },
+        {
+            "user": "Grace Akinwale",
+            "location": "Jos, Nigeria",
+            "rating": 4,
+            "comment": "Convenient and user-friendly, but I wish there were more phone numbers available during peak hours."
+        }
+    ],
+    "SITE_TELEGRAM_SUPPORT": "https://t.me/diberrysms",
+    "_comment2": "EMAIL SMTP Config",
+    "SMTP_SERVER": "mail.diberrysms.com",
+    "SMTP_USERNAME": "support@diberrysms.com",
+    "SMTP_PASSWORD": "diberrysmsadmin",
+    "SMTP_PORT": 465,
+    "_comment3": "User dashboard Theme Config",
+    "THEME_MODE": "light",
+    "THEME_CONTRAST": "false",
+    "THEME_COLOUR": "preset-1",
+    "THEME_LAYOUT": "vertical",
+    "THEME_LAYOUT_WIDTH": "",
+    "_comment4": "vertical,horizontal, color-header, compact, tab",
+    "THEME_LAYOUT_DIRECTION": "ltr",
+    "THEME_SIDEBAR_CAPTION": "false",
+    "_comment5": "vertical,horizontal, color-header, compact, tab",
+    "BOT_DEPOSIT_API": "",
+    "BOT_MANUAL_API": "",
+    "CHAT_ID": "https://t.me/diberrysms",
+    "ADMIN_EMAIL": "admin@diberrysms"
+}

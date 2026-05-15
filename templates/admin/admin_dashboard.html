@@ -1,0 +1,228 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block head %}
+    <!-- Notyf CSS File -->
+    <link rel="stylesheet" type="text/css" href="/static/plugins/notyf/notyf.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+     <style>
+
+        /* responsive tables */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media screen and (max-width: 767px) {
+            .table-responsive .table {
+                width: 100%;
+                margin-bottom: 15px;
+                overflow-y: hidden;
+                -ms-overflow-style: -ms-autohiding-scrollbar;
+                border: 1px solid #ddd;
+            }
+            .table-responsive .table > thead > tr > th,
+            .table-responsive .table > tbody > tr > th,
+            .table-responsive .table > tfoot > tr > th,
+            .table-responsive .table > thead > tr > td,
+            .table-responsive .table > tbody > tr > td,
+            .table-responsive .table > tfoot > tr > td {
+                white-space: nowrap;
+            }
+        }
+    </style>
+{% endblock %}
+{% block main_content %}
+    <!-- Info boxes -->
+        <div class="row">
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box">
+              <span class="info-box-icon bg-info elevation-1"><i class="fas fa-shopping-cart"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Sales</span>
+                <span class="info-box-number">
+                  {{ total_sales }}
+                </span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-money-bill"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Revenue</span>
+                <span class="info-box-number">₦{{ amount_spent }}</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+
+          <!-- fix for small devices only -->
+          <div class="clearfix hidden-md-up"></div>
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-money-check-alt"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Total Deposit</span>
+                <span class="info-box-number">₦{{ total_deposit }}</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Members</span>
+                <span class="info-box-number">{{ total_users }}</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">Recent Sales</h5>
+
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12">
+                      <div class="table-responsive">
+                        <table class="table table-borderless datatable">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody id="recent-sales">
+                        </tbody>
+                      </table>
+                      </div>
+                  <!-- /.recent-sales -->
+                  </div>
+                  <!-- /.col -->
+                </div>
+                <!-- /.row -->
+              </div>
+              <!-- ./card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">Top Selling</h5>
+
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12">
+                      <div class="table-responsive">
+                        <table class="table table-borderless">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Sold</th>
+                            <th scope="col">Revenue</th>
+                          </tr>
+                        </thead>
+                        <tbody id="top-sales">
+                        </tbody>
+                      </table>
+                      </div>
+                  <!-- /.top-selling -->
+                  </div>
+                  <!-- /.col -->
+                </div>
+                <!-- /.row -->
+              </div>
+              <!-- ./card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+{% endblock %}
+{% block script %}
+    <!-- Notyf JS File -->
+    <script src="/static/plugins/notyf/notyf.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        function updateRecentSales() {
+            $.ajax({
+                type: "GET",
+                url: "/recent-sales",
+                contentType: "application/json",
+            }).done(function(response) {
+                if (response.status === 'Table Loaded') {
+                    $("#recent-sales").html(response.data);
+                } else {
+                    console.error("Error loading recent sales:", response.status);
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX call failed:", textStatus, errorThrown);
+            });
+        }
+
+        // Call the function once to populate the tbody initially
+        updateRecentSales();
+
+        // Set the interval to update the tbody every 60 seconds
+        setInterval(updateRecentSales, 60000);
+
+        function updateTopSales() {
+            $.ajax({
+                type: "GET",
+                url: "/top-sales",
+                contentType: "application/json",
+            }).done(function(response) {
+                if (response.status === 'Table Loaded') {
+                    $("#top-sales").html(response.data);
+                } else {
+                    console.error("Error loading top sales:", response.status);
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX call failed:", textStatus, errorThrown);
+            });
+        }
+
+        // Call the function once to populate the tbody initially
+        updateTopSales();
+
+        // Set the interval to update the tbody every 60 seconds
+        setInterval(updateTopSales, 60000);
+    });
+    </script>
+{% endblock %}

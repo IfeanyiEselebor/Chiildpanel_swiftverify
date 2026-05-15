@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation Complete</title>
+    <link rel="stylesheet" href="/static/assets/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .url-box {
+            display: flex;
+            align-items: stretch;
+            margin-bottom: .75rem;
+        }
+        .url-box input {
+            font-family: monospace;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
+        .copy-btn { min-width: 90px; }
+        .step { padding: 8px 0; }
+        .step .num {
+            display: inline-block;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: var(--bs-primary, #0d6efd);
+            color: white;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 8px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5" style="max-width:780px;">
+    <div class="text-center mb-4">
+        <div class="text-success" style="font-size:4rem;">✓</div>
+        <h2>Installation Complete</h2>
+        <p class="text-muted">Your child panel is set up. One last step on the parent platform.</p>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-warning-subtle">
+            <strong>Required: Register these webhook URLs on the parent</strong>
+        </div>
+        <div class="card-body">
+            <p class="mb-3">
+                Log in to
+                <a href="{{ parent_settings_url }}" target="_blank" rel="noopener">{{ parent_settings_url }}</a>,
+                open <strong>Settings → API Key</strong>, and paste the URLs below into the two webhook fields.
+                Without these, your panel won't receive code updates or key rotations from the parent.
+            </p>
+
+            <div class="step">
+                <span class="num">1</span>
+                <strong>Key-Rotation Webhook</strong>
+                <div class="text-muted small mb-2">Used when you regenerate your API key on the parent.</div>
+                <div class="url-box">
+                    <input type="text" class="form-control" value="{{ rotate_url }}" readonly id="rotate-url">
+                    <button type="button" class="btn btn-outline-primary copy-btn" data-target="rotate-url">Copy</button>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="num">2</span>
+                <strong>Order-Event Webhook</strong>
+                <div class="text-muted small mb-2">Used to push SMS codes, timeouts, and cancellations to your panel in real time.</div>
+                <div class="url-box">
+                    <input type="text" class="form-control" value="{{ event_url }}" readonly id="event-url">
+                    <button type="button" class="btn btn-outline-primary copy-btn" data-target="event-url">Copy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header"><strong>What's next</strong></div>
+        <div class="card-body">
+            <ul class="mb-0">
+                <li>Log in to your admin panel using the credentials you just created.</li>
+                <li>Open <strong>Admin → Payment Settings</strong> to configure VPay / Korapay / manual bank transfer.</li>
+                <li>Test an order from the user dashboard end-to-end.</li>
+                <li>If something fails, check the parent's <strong>Settings → API Key</strong> page for any "webhook deliveries failed" notice.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <a href="/admin/login" class="btn btn-primary btn-lg">Continue to Admin Login</a>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        var id = btn.getAttribute('data-target');
+        var input = document.getElementById(id);
+        input.select();
+        document.execCommand('copy');
+        var original = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-success');
+        setTimeout(function(){
+            btn.textContent = original;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-primary');
+        }, 1500);
+    });
+});
+</script>
+</body>
+</html>

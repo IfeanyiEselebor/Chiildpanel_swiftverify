@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ panel_name }} - Payment Notification</title>
+    <style type="text/css">
+        body {
+            padding: 0px;
+            margin: 0px;
+            font-size: 18px;
+            line-height: 29.7px;
+            font-family: 'Helvetica Neue';
+            font-weight: 500;
+            font-weight: 100;
+        }
+        .zoom { zoom: 0.64; }
+        .body { height: 100vh; }
+        .container {
+            width: 100%;
+            margin: 0px auto;
+        }
+        .header {
+            width: 50%;
+            margin: 0px auto;
+            padding-top: 42px;
+            text-align: left;
+            font-family: 'Helvetica Neue';
+        }
+        .header p, span.header {
+            font-family: 'Helvetica Neue';
+            font-size: 24px;
+            font-weight: 500;
+            text-align: left;
+            width: 100%;
+        }
+        .content {
+            width: 50%;
+            margin: 0 auto;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 30px;
+            letter-spacing: 0em;
+            text-align: left;
+        }
+        .content a.receipt {
+            color: #fff;
+            background-color: #F62222;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            border: none;
+            text-decoration: none;
+        }
+        .content p a { color: #f0563c; }
+        .content p b {
+            font-weight: 700;
+            font-size: 31px;
+            padding: 20px 50px;
+            background-color: #f9f9f9;
+        }
+        table {
+            padding: 20px;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+        }
+        table tr td:first-child {
+            color: #999999;
+            font-weight: 400;
+        }
+        table td {
+            padding-right: 20px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        p.sign {
+            size: 16px;
+            margin-top: 40px;
+            margin-bottom: 0px;
+        }
+        .divider {
+            width: 100%;
+            margin: 20px 0;
+            border-top: 1px solid #dfdfdf;
+        }
+        .footer {
+            width: 50%;
+            margin: 0px auto;
+            margin-top: 50px;
+            text-align: left;
+        }
+        .footer .footer_header, .footer .footer_body {
+            font-family: 'Helvetica Neue';
+            font-size: 14px;
+            font-weight: 400;
+        }
+        .footer .footer_body {
+            color: #999999;
+            text-align: left;
+            margin: 10px auto;
+        }
+        .footer .store { margin-bottom: 50px; }
+        .footer .store a, .footer .social_button a { margin: auto 10px; }
+        .social_button { margin-top: 10px; }
+        .social_button a:first-child, .footer .store a:first-child { margin: 0px 10px 0px 0px; }
+        .footer .copyright {
+            font-size: 12px;
+            font-weight: 400;
+            color: #999999;
+        }
+        @media screen and (max-width: 630px) {
+            .header { width: 80%; margin: 0px auto; text-align: center; }
+            .content { width: 80%; font-size: 13px; }
+            span.header { font-size: 16px; }
+            table { width: 100%; padding: 12px; }
+            table td { font-size: 12px; padding-right: 2px; }
+            .footer { width: 80%; text-align: left; padding: 20px 0px; }
+            .footer .store a { display: block; margin: 20px 0; }
+            .footer .footer_body { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ logo_url }}" alt="{{ panel_name }} Logo"><br>
+            <p>Your payment is complete!</p>
+        </div>
+        <div class="content">
+            <p>Hello {{ username }},</p>
+            <p>We are glad to inform you that your payment of <strong>{{ currency }}{{ amount }}</strong> to {{ panel_name }} has been received.</p>
+            <div class="divider"></div>
+            <table>
+                <tr>
+                    <td>Amount Paid</td>
+                    <td>{{ currency }}{{ amount }}</td>
+                </tr>
+                <tr>
+                    <td>Payment Method</td>
+                    <td>{{ payment_method }}</td>
+                </tr>
+                <tr>
+                    <td>Transaction Reference</td>
+                    <td>{{ transaction_id }}</td>
+                </tr>
+                <tr>
+                    <td>Paid On</td>
+                    <td>{{ date }}</td>
+                </tr>
+            </table>
+            <div class="divider"></div>
+            <p>{{ panel_name }} ®. All rights reserved.</p>
+            <p class="sign">Best Regards,<br>{{ panel_name }} Team</p>
+            <p>This is a system-generated message. Do not reply.</p>
+        </div>
+        <div class="footer">
+            <div class="divider"></div>
+            <a href="{{ website_url }}"></a>
+            <p class="copyright">Copyright © {{ current_year }}<br>{{ panel_name }} | Simplifying Number Verification</p>
+        </div>
+    </div>
+</body>
+</html>

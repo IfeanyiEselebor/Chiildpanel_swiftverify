@@ -1,0 +1,38 @@
+{
+  "_comment": "Fresh-install template. Copy to config.json before first boot.",
+  "_comment_install": "SITE_INSTALLED=0 makes /install render; the install handler flips it to 1 on success.",
+
+  "SITE_INSTALLED": "0",
+  "PARENT_API_BASE": "https://swiftverifyng.com",
+
+  "SITE_NAME": "",
+  "SITE_LOGO": "",
+  "SITE_FAVICON": "",
+  "SITE_SUPPORT_EMAIL": "",
+  "SITE_DOMAIN": "",
+  "CURRENT_THEME": "THEME_1",
+
+  "reviews": [],
+
+  "SITE_TELEGRAM_SUPPORT": "",
+
+  "_comment2": "EMAIL SMTP Config — fill before sending password resets / receipts",
+  "SMTP_SERVER": "",
+  "SMTP_USERNAME": "",
+  "SMTP_PASSWORD": "",
+  "SMTP_PORT": 465,
+
+  "_comment3": "User dashboard Theme Config — install page overwrites these",
+  "THEME_MODE": "light",
+  "THEME_CONTRAST": "false",
+  "THEME_COLOUR": "preset-1",
+  "THEME_LAYOUT": "vertical",
+  "THEME_LAYOUT_WIDTH": "",
+  "THEME_LAYOUT_DIRECTION": "ltr",
+  "THEME_SIDEBAR_CAPTION": "false",
+
+  "BOT_DEPOSIT_API": "",
+  "BOT_MANUAL_API": "",
+  "CHAT_ID": "",
+  "ADMIN_EMAIL": ""
+}

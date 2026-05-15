@@ -1,0 +1,221 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Payment Gateway{% endblock %}
+{% block head %}
+      <!-- DataTables -->
+  <link rel="stylesheet" href="/static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Notyf CSS File -->
+    <link rel="stylesheet" type="text/css" href="/static/plugins/notyf/notyf.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+{% endblock %}
+{% block main_content %}
+    <div class="row">
+          <div class="col-12">
+            <!-- /.row -->
+            <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-money-bill "></i> Payment Gateway Settings
+            </h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-5 col-sm-3">
+                <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+                  <a class="nav-link active" id="vert-tabs-korapay-tab" data-toggle="pill" href="#vert-tabs-korapay" role="tab" aria-controls="vert-tabs-korapay" aria-selected="true">Korapay</a>
+                  <a class="nav-link" id="vert-tabs-vpay-tab" data-toggle="pill" href="#vert-tabs-vpay" role="tab" aria-controls="vert-tabs-vpay" aria-selected="false">Vpay</a>
+                  <a class="nav-link" id="vert-tabs-manual_funding_tab" data-toggle="pill" href="#vert-tabs-manual_funding" role="tab" aria-controls="vert-tabs-manual_funding" aria-selected="false">Manual Funding</a>
+                </div>
+              </div>
+              <div class="col-7 col-sm-9">
+                <div class="tab-content" id="vert-tabs-tabContent">
+                    <div class="tab-pane text-left fade show active" id="vert-tabs-korapay" role="tabpanel" aria-labelledby="vert-tabs-korapay-tab">
+                    <form>
+                        <div class="form-group">
+                            <input type="checkbox" data-toggle="toggle" data-onstyle="success" data-offstyle="danger" id="korapay-event" data-on="Active" data-off="Inactive" data-width="100" {% if payment['method']['korapay'] == 1 %}checked{% endif %}>
+                            <label class="" for="my-checkbox">&nbsp;&nbsp;Korapay</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="korapay_secret_key">Korapay Secret Key</label>
+                            <input type="text" class="form-control" id="korapay_secret_key" placeholder="{{ payment['api_key']['korapay'] }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="korapay_public_key">Korapay Public Key</label>
+                            <input type="text" class="form-control" id="korapay_public_key" placeholder="{{ payment['public_key']['korapay_public_key'] }}">
+                        </div>
+                        <button type="button" class="btn btn-success float-right" id="korapay_submit">Update</button>
+                    </form>
+                    </div>
+                    <div class="tab-pane fade" id="vert-tabs-vpay" role="tabpanel" aria-labelledby="vert-tabs-vpay-tab">
+                    <form>
+                    <div class="form-group">
+                    <input type="checkbox" data-toggle="toggle" data-onstyle="success" data-offstyle="danger" id="vpay-event" data-on="Active" data-off="Inactive" data-width="100" {% if payment['method']['vpay'] == 1 %}checked{% endif %}>
+                    <label class="" for="my-checkbox">  Vpay </label>
+                    </div>
+                    <div class="form-group">
+                    <label for="vpay_access_token">Vpay Access Token</label>
+                    <input type="text" class="form-control" id="vpay_access_token" placeholder="{{ payment['api_key']['vpay'] }}">
+                    </div>
+                    <div class="form-group">
+                    <label for="vpay_public_key">Vpay Public Key</label>
+                    <input type="text" class="form-control" id="vpay_public_key" placeholder="{{ payment['public_key']['vpay_public_key'] }}">
+                    </div>
+                    <div class="form-group">
+                    <label for="vpay_merchant_email">Vpay Merchant Email</label>
+                    <input type="email" class="form-control" id="vpay_merchant_email" placeholder="{{ payment['vpay']['vpay_merchant_email'] }}">
+                    </div>
+                    <div class="form-group">
+                    <label for="vpay_merchant_password">Vpay Merchant Password</label>
+                    <input type="password" class="form-control" id="vpay_merchant_password" placeholder="{{ payment['vpay']['vpay_merchant_password'] }}">
+                    </div>
+                    <button type="button" class="btn btn-success float-right" id="vpay_submit">Update</button>
+                    </form>
+                    </div>
+                    <div class="tab-pane fade" id="vert-tabs-manual_funding" role="tabpanel" aria-labelledby="vert-tabs-manual_funding_tab">
+                    <form>
+                        <div class="form-group">
+                             <input type="checkbox"  data-toggle="toggle" data-onstyle="success" data-offstyle="danger" id="manual_funds_event" data-on="Active" data-off="Inactive" data-width="100" {% if payment['method']['manual_payment'] == 1 %}checked{% endif %}>
+                            <label class="" for="my-checkbox">&nbsp;&nbsp;Manual Fund</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="manual_payment_bank"> Bank Name</label>
+                            <input type="text" class="form-control" id="manual_payment_bank" placeholder="{{ payment['manual_payment_bank'] }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="manual_payment_account_name"> Account Name</label>
+                            <input type="text" class="form-control" id="manual_payment_account_name" placeholder="{{ payment['manual_payment_account_name'] }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="manual_payment_account"> Account Number</label>
+                            <input type="text" class="form-control" id="manual_payment_account" placeholder="{{ payment['manual_payment_account'] }}">
+                        </div>
+                        <button type="button" class="btn btn-success float-right" id="manual_fund_submit">Update</button>
+                    </form>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+          </div>
+        </div>
+    <!-- /.row -->
+{% endblock %}
+{% block script %}
+    <!-- Datatables JS File -->
+    <script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <!-- Bootstrap Switch -->
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+    <!-- Notyf JS File -->
+    <script src="/static/plugins/notyf/notyf.min.js"></script>
+    <script>
+      // Payment Method Update
+      document.addEventListener("DOMContentLoaded", function() {
+          // Notification setup
+            const notyf = new Notyf({
+              duration: 1000,
+              position: { x: 'right', y: 'top' },
+              types: [
+                  {
+                      type: "warning",
+                        backgroundColor: "#ffc107",
+                        icon: {
+                            className: "notyf__icon--error",
+                            tagName: "i"
+                        }
+                  }
+              ]
+            });
+          // Korapay Form Handling
+          $('#korapay_submit').click(function() {
+    let korapay_checkbox = $("#korapay-event").prop('checked');
+    let korapay_secret_key = $("#korapay_secret_key").val().trim() || null;
+    let korapay_public_key = $("#korapay_public_key").val().trim() || null;
+    $.ajax({
+        url: '/admin/payment_update',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            'method': 'korapay',
+            'korapay_secret_key': korapay_secret_key,
+            'korapay_public_key': korapay_public_key,
+            'korapay_status': korapay_checkbox
+        }),
+        dataType: 'json',
+        success: function(response) {
+            if (response['status'] === 'success') {
+                notyf.success({ message: "Payment settings updated successfully!", duration: 3000 });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+});
+          // Vpay Form Handling
+          $('#vpay_submit').click(function() {
+                let vpay_checkbox = $("#vpay-event").prop('checked');
+                let vpay_access_token = $("#vpay_access_token").val().trim() || null;
+                let vpay_public_key = $("#vpay_public_key").val().trim() || null;
+                let vpay_merchant_email = $("#vpay_merchant_email").val().trim() || null;
+                let vpay_merchant_password = $("#vpay_merchant_password").val().trim() || null;
+                $.ajax({
+                    url: '/admin/payment_update',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        'method': 'vpay',
+                        'vpay_access_token': vpay_access_token,
+                        'vpay_public_key': vpay_public_key,
+                        'vpay_merchant_email': vpay_merchant_email,
+                        'vpay_merchant_password': vpay_merchant_password,
+                        'vpay_status': vpay_checkbox
+                    }),
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response['status'] === 'success') {
+                            notyf.success({ message: "Payment settings updated successfully!", duration: 3000 });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+          // Manual Fund Form Handling
+          $('#manual_fund_submit').click(function() {
+            let manual_funds_checkbox = $("#manual_funds_event").prop('checked');
+            let manual_payment_bank = $("#manual_payment_bank").val().trim() || null;
+            let manual_payment_account_name = $("#manual_payment_account_name").val().trim() || null;
+            let manual_payment_account = $("#manual_payment_account").val().trim() || null;
+            $.ajax({
+              url: '/admin/payment_update',
+              method: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify({
+                  'method': 'manual_funds',
+                  'manual_fund_status': manual_funds_checkbox,
+                  'manual_payment_bank': manual_payment_bank,
+                  'manual_payment_account_name': manual_payment_account_name,
+                  'manual_payment_account': manual_payment_account
+              }),
+              dataType: 'json',
+              success: function(response) {
+                if (response['status'] === 'success'){
+                    notyf.success({ message: "Payment settings updated successfully!", duration: 3000});
+                }
+              },
+              error: function(xhr, status, error) {
+                console.error('Error:', error);
+              }
+            });
+          });
+      });
+    </script>
+{% endblock %}

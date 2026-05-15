@@ -1,0 +1,251 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Users{% endblock %}
+{% block head %}
+      <!-- DataTables -->
+  <link rel="stylesheet" href="/static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Notyf CSS File -->
+    <link rel="stylesheet" type="text/css" href="/static/plugins/notyf/notyf.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <style>
+        #reason {
+            color: #fff !important;
+            background-color: transparent !important;
+        }
+
+        #reason:-webkit-autofill,
+        #reason:-webkit-autofill:hover,
+        #reason:-webkit-autofill:focus {
+            -webkit-text-fill-color: #fff !important;
+            -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+            transition: background-color 5000s ease-in-out 0s !important;
+        }
+    </style>
+{% endblock %}
+{% block main_content %}
+        <div class="row">
+              <div class="col-md-12">
+                <div class="card">
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-12">
+                        <table class="table table-bordered datatable display responsive nowrap" id="users" style="width:100%">
+                        <thead>
+                          <tr>
+                             <th>
+                                <b>ID</b>
+                             </th>
+                             <th>Username</th>
+                             <th>Email</th>
+                             <th>Wallet Balance</th>
+                             <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody id="users">
+                        </tbody>
+                      </table>
+                      <!-- /.users -->
+                      </div>
+                      <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                  </div>
+                  <!-- ./card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /.col -->
+            </div>
+        <!-- /.row -->
+          <div class="modal fade" id="modal_unban" aria-hidden="true" aria-labelledby="modal_unbanLabel" tabindex="-1">
+              <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="modal_unbanLabel">Confirm Transaction</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Are you sure, you want to unban this user, this user was ban because of  <span id="ban_reason"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnYesConfirmYes"
+                        type="button" class="btn btn-success">Yes</button>
+                        <button id="btnNoConfirmNo"
+                        type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                    </div>
+                    </div>
+                  </div>
+            </div>
+            <div class="modal fade" id="modal_ban" aria-hidden="true" aria-labelledby="modal_banLabel" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="modal_banLabel">Ban User #<span id="user_id"></span></h5>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="mb-2">Reason:</label>
+                        <input class="form-control form-control-lg py-1" name="reason" id="reason">
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnSubmit"
+                        type="button" class="btn btn-success">Submit</button>
+                        <button id="btnNoConfirmNo"
+                type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+                  </div>
+            </div>
+{% endblock %}
+{% block script %}
+    <!-- Datatables JS File -->
+    <script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <!-- Notyf JS File -->
+    <script src="/static/plugins/notyf/notyf.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        var table_reload;
+        // Notification setup
+        const notyf = new Notyf({
+          duration: 1000,
+          position: { x: 'right', y: 'top' },
+          types: [
+              {
+                  type: "warning",
+                    backgroundColor: "#ffc107",
+                    icon: {
+                        className: "notyf__icon--error",
+                        tagName: "i"
+                    }
+              }
+          ]
+        });
+        /* Initiate Datatables */
+        var table = $('#users').DataTable({
+          responsive: true,
+          ajax: {
+            type: "GET",
+            url: '/admin_users',
+            dataSrc: function(json) {
+              // Check if the response was successful
+              if (json === "Login Required") {
+                /* Reload Page */
+                location.reload();
+              } else {
+                return json.data;
+              }
+            }
+          },
+
+          columns: [
+            { data: 'id' },
+            { data: 'username' },
+            { data: 'email' },
+            { data: 'wallet_balance' },
+            { data: 'action' }
+          ]
+        });
+
+        // Set interval to reload the table every 3 seconds
+        table_reload = setInterval(function() {
+          table.ajax.reload();
+        }, 60000);
+        // User Ban
+        $(document).on("click", ".ban-btn", function(){
+            // Clear any existing interval
+            clearInterval(table_reload);
+            $(this).attr('disabled', 'disabled');
+            $('#btnSubmit').attr('data-user_id', $(this).data('user_id'));
+            $("#modal_ban").modal("show");
+            $('#user_id').text($(this).data('user_id'));
+        });
+        $("#modal_ban").on('hidden.bs.modal', function(event) {
+            const banBtns = document.querySelectorAll('a.ban-btn');
+            banBtns.forEach(btn => {
+                btn.removeAttribute('disabled');
+                btn.style.pointerEvents = 'auto';
+                btn.style.opacity = '1';
+            });
+            // Set interval to reload the table every 60 seconds
+            table_reload = setInterval(function() {
+              table.ajax.reload();
+            }, 60000);
+            $("input[name='reason']").val("")
+        });
+        // User Unban
+        $(document).on("click", ".unban-btn", function(){
+            $(this).attr('disabled', 'disabled');
+            $('#btnYesConfirmYes').attr('data-user_id', $(this).data('user_id'));
+            $('#ban_reason').text($(this).data('reason'));
+             // Clear any existing interval
+             clearInterval(table_reload);
+            $("#modal_unban").modal("show");
+        });
+        $("#modal_unban").on('hidden.bs.modal', function(event) {
+            const unbanBtns = document.querySelectorAll('a.unban-btn[disabled]');
+            unbanBtns.forEach(btn => {
+                btn.removeAttribute('disabled');
+                btn.style.pointerEvents = 'auto';
+                btn.style.opacity = '1';
+            });
+            // Set interval to reload the table every 60 seconds
+            table_reload = setInterval(function() {
+              table.ajax.reload();
+            }, 60000);
+        });
+        $(document).on("click", "#btnYesConfirmYes", function(){
+            var form_data = new FormData();
+            form_data.append("user_id", $(this).data('user_id'))
+            $.ajax({
+                type: "POST",
+                url: "/unban_user",
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form_data,
+                success: function (response) {
+                    notyf.success({message: response['message'], duration: 3000});
+                    table.ajax.reload();
+                    table_reload = setInterval(function() {
+                        table.ajax.reload();
+                    }, 60000);
+                },
+                error: function (response) {
+                    console.log(response['message']);
+                }
+            });
+            $("#modal_unban").modal("hide");
+        });
+        $(document).on("click", "#btnSubmit", function(){
+            var form_data = new FormData();
+            form_data.append("user_id", $(this).data('user_id'))
+            form_data.append("reason", $("input[name='reason']").val())
+            $.ajax({
+                type: "POST",
+                url: "/ban_user",
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form_data,
+                success: function (response) {
+                    notyf.success({message: response['message'], duration: 3000});
+                    table.ajax.reload();
+                    table_reload = setInterval(function() {
+                        table.ajax.reload();
+                    }, 60000);
+                },
+                error: function (response) {
+                    console.log(response['message']);
+                }
+            });
+            $("#modal_ban").modal("hide");
+        });
+      });
+    </script>
+{% endblock %}

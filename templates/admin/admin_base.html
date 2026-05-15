@@ -1,0 +1,254 @@
+{% set title_content %}
+    {% block title %}{% endblock %}
+{% endset %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ SITE_NAME }} | {{ title_content }}</title>
+    <link rel="shortcut icon" href="{{ SITE_FAVICON }}" />
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome CSS Files -->
+    <link rel="stylesheet" href="/static/plugins/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/plugins/fontawesome/css/sharp-solid.css">
+    <link rel="stylesheet" href="/static/plugins/fontawesome/css/sharp-regular.css">
+    <link rel="stylesheet" href="/static/plugins/fontawesome/css/sharp-thin.css">
+    <link rel="stylesheet" href="/static/plugins/fontawesome/css/sharp-light.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/static/plugins/fontawesome-free/css/v4-shims.css">
+    <!-- Bootstrap Icons -->
+    <link href="/static/plugins/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="/static/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/static/dist/css/adminlte.min.css">
+    <style>
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+          -webkit-box-shadow: 0 0 0 1000px #2f3640 inset; /* Dark gray background */
+          -webkit-text-fill-color: #adb5bd; /* Light gray text */
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+
+  <!-- Preloader -->
+  <div class="preloader flex-column justify-content-center align-items-center">
+    <img class="animation__wobble" src="{{ SITE_LOGO }}" alt="{{ SITE_NAME }}Logo" height="60" width="60">
+  </div>
+
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-dark">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="" class="nav-link">Home</a>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+          <i class="fas fa-th-large"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="" class="brand-link">
+      <img src="{{ SITE_LOGO }}" alt="{{ SITE_NAME }} Logo" class="brand-image" style="opacity: .8">
+      <span class="brand-text font-weight-light">{{ SITE_NAME }}</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+          <div class="image">
+              <span href="#">{{ session['username'] }}</span>
+            </div>
+
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item">
+            <a href="/admin/dashboard" class="nav-link {% if active_menu == 'dashboard' %}active{% endif %}">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Dashboard
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/orders" class="nav-link {% if active_menu == 'orders' %}active{% endif %}">
+              <i class="nav-icon fa fa-cart-plus"></i>
+              <p>
+                Orders
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/users" class="nav-link {% if active_menu == 'users' %}active{% endif %}">
+              <i class="nav-icon bi bi-people-fill"></i>
+              <p>
+                Users
+              </p>
+            </a>
+          </li>
+          <li class="nav-item {% if active_menu == 'manual_funding' or active_menu == 'payment_gateway' %} menu-open{% endif %}">
+            <a class="nav-link {% if active_menu == 'manual_funding' or active_menu == 'payment_gateway' %}active{% endif %}">
+              <i class="nav-icon bi bi-bank"></i>
+              <p>
+                User Funding
+                <i class="fas fa-angle-left right"></i>
+                <span class="right badge badge-danger">{{ pending_transaction }}</span>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/manual_funding" class="nav-link {% if active_menu == 'manual_funding' %}active{% endif %}">
+                  <i class="nav-icon fas fa-cash-register"></i>
+                  <p>Manual Funding</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/payment" class="nav-link {% if active_menu == 'payment_gateway' %}active{% endif %}">
+                  <i class="nav-icon bi bi-cash-coin"></i>
+                  <p>
+                    Payment Gateway
+                  </p>
+                </a>
+              </li>
+            </ul>
+          </li>
+        <li class="nav-item">
+            <a href="/admin/site" class="nav-link {% if active_menu == 'site' %}active{% endif %}">
+              <i class="nav-icon fa fa-gear"></i>
+              <p>
+                Site Config
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/verification" class="nav-link {% if active_menu == 'verification' %}active{% endif %}">
+              <i class="nav-icon fa fa-tags"></i>
+              <p>
+                Pool Labels
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/settings" class="nav-link {% if active_menu == 'settings' %}active{% endif %}">
+              <i class="nav-icon fa fa-gear"></i>
+              <p>
+                Settings
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/logout" class="nav-link">
+              <i class="nav-icon fa fa-sign-out"></i>
+              <p>
+                Logout
+              </p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">{{ title_content }}</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/admin/dashboard">Home</a></li>
+              <li class="breadcrumb-item active">{{ title_content }}</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        {% block main_content %}{% endblock %}
+      </div><!--/. container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <strong>Copyright &copy; <script>document.write(new Date().getFullYear());</script> <a href="https://{{ domain }}">{{ domain }}</a>.</strong>
+    All rights reserved.
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script src="/static/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- overlayScrollbars -->
+<script src="/static/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/dist/js/adminlte.js"></script>
+
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script src="/static/plugins/jquery-mousewheel/jquery.mousewheel.js"></script>
+<script src="/static/plugins/raphael/raphael.min.js"></script>
+<script src="/static/plugins/jquery-mapael/jquery.mapael.min.js"></script>
+<script src="/static/plugins/jquery-mapael/maps/usa_states.min.js"></script>
+<!-- ChartJS -->
+<script src="/static/plugins/chart.js/Chart.min.js"></script>
+
+
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="/static/dist/js/pages/dashboard2.js"></script>
+{% block script %}{% endblock %}
+</body>
+</html>

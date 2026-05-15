@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ SITE_NAME }} | Admin Log in</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/plugins/fontawesome-free/css/all.min.css">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="/static/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/dist/css/adminlte.min.css">
+    <!-- Notyf CSS File -->
+    <link rel="stylesheet" type="text/css" href="/static/plugins/notyf/notyf.min.css">
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <!-- /.login-logo -->
+  <div class="card card-outline card-primary">
+    <div class="card-header text-center">
+      <a href="/" class="h1">{{ SITE_NAME }}</a>
+    </div>
+    <div class="card-body">
+      <p class="login-box-msg">Sign in to start your admin session</p>
+
+      <form id="login_form">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Username" name='username' id="myInput">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" placeholder="Password" name='password' id="myInput">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <div class="icheck-primary">
+              <input type="checkbox" id="rememberMe">
+              <label for="rememberMe">
+                Remember Me
+              </label>
+            </div>
+          </div>
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block" id="login_btn">Sign In</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+    </div>
+    <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="/static/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Notyf JS File -->
+<script src="/static/plugins/notyf/notyf.min.js"></script>
+<script>
+    function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+    function deleteCookie(name, path) {
+      document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=" + path + ";";
+    }
+
+    // Notification setup
+    const notyf = new Notyf({
+      duration: 1000,
+      position: { x: 'right', y: 'top' },
+      types: [
+          {
+              type: "warning",
+                backgroundColor: "#ffc107",
+                icon: {
+                    className: "notyf__icon--error",
+                    tagName: "i"
+                }
+          }
+      ]
+    });
+    $("#login_form").submit(function (event) {
+    document.getElementById("login_btn").disabled = true;
+    $.ajax({
+      type: "POST",
+      url: "/login_admin",
+      contentType: "application/json",
+      data: JSON.stringify({
+              username: $("input[name='username']").val(),
+              password: $("input[name='password']").val(),
+              remember_me: $('#rememberMe').prop('checked') }
+            ),
+      encode: true,
+    }).done(function (data) {
+        if (data['status'] === "Login Successful"){
+            if (typeof data['rememberme'] !== 'undefined' && data['rememberme'] !== "") {
+                setCookie("rememberme", data['rememberme'], 30);
+            } else {
+                deleteCookie("rememberme");
+            }
+            notyf.success({ message: "Login Successfully", duration: 3000});
+            setTimeout(() => {
+                const baseUrl = window.location.origin;
+                window.location.replace(baseUrl +"/admin/dashboard");
+            }, 3000);
+        }
+        if (data['status'] === "Username or password not correct"){
+            notyf.error({ message: "Username or password not correct", duration: 3000});
+            document.getElementById("login_btn").disabled = false;
+        }
+    });
+    event.preventDefault();
+  });
+</script>
+</body>
+</html>

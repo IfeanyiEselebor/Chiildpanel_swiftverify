@@ -1,0 +1,183 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Users{% endblock %}
+{% block head %}
+      <!-- DataTables -->
+  <link rel="stylesheet" href="/static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Notyf CSS File -->
+    <link rel="stylesheet" type="text/css" href="/static/plugins/notyf/notyf.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+{% endblock %}
+{% block main_content %}
+    <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-6">
+                      <div class="row">
+                      <dl class="row">
+                          <dt class="col-sm-4">Username</dt>
+                          <dd class="col-sm-8">{{ username }}</dd>
+                          <dt class="col-sm-4">Email</dt>
+                          <dd class="col-sm-8">{{ user_email }}</dd>
+                          <dt class="col-sm-4">Balance</dt>
+                          <dd class="col-sm-8">₦{{ user_balance }}</dd>
+                        </dl>
+                      <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                  <!-- /. -->
+                  </div>
+                  <!-- /.col -->
+                    <div class="col-6">
+                      <div class="row">
+                      <dl class="row">
+                          <dt class="col-sm-4">Total Deposit</dt>
+                          <dd class="col-sm-8">₦{{ total_deposit }}</dd>
+                          <dt class="col-sm-4">Total Spent</dt>
+                          <dd class="col-sm-8">₦{{ amount_spent }}</dd>
+                          <dt class="col-sm-4">User Status</dt>
+                          <dd class="col-sm-8">{{ status | safe }}</dd>
+                        </dl>
+                      <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                  <!-- /. -->
+                  </div>
+                  <!-- /.col -->
+                </div>
+                <!-- /.row -->
+              </div>
+              <!-- ./card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+    <!-- /.row -->
+    <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-list"></i>
+                    {{ username }} History
+                </h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="row">
+                    <div class="table-responsive px-4">
+                          <table class="table table-bordered datatable display responsive nowrap" id="transaction" width="100%">
+                              <thead>
+                                <tr>
+                                    <th>
+                                        <b>ID</b>
+                                    </th>
+                                    <th data-type="date" data-format="YYYY/DD/MM">Date</th>
+                                    <th>Operation</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Balance</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+
+                              </tbody>
+                            </table>
+                      </div>
+                      <!-- Table -->
+                </div>
+                <!-- /.row -->
+              </div>
+              <!-- ./card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+    <!-- /.row -->
+{% endblock %}
+{% block script %}
+    <!-- Datatables JS File -->
+    <script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <!-- Notyf JS File -->
+    <script src="/static/plugins/notyf/notyf.min.js"></script>
+    <script>
+        function handlePendingButtonClick(event) {
+            // Prevent the default button action
+            event.preventDefault();
+
+            // Get the transaction_id from the clicked button
+            const transactionId = $(event.target).data("transaction_id");
+
+            $.ajax({
+                type: "POST",
+                url: "/admin/add-funds",
+                contentType: "application/json",
+                data: JSON.stringify({ transaction_id: transactionId }),
+                encode: true,
+            }).done(function(data) {
+                const statusText = document.getElementById("status-text");
+
+                if (data['status'] === "Payment Successful") {
+                    notyf.success({ message: "Deposit Successful!", duration: 5000 });
+                } else if (data['status'] === "Payment Failed") {
+                    notyf.error({ message: "Deposit Failed", duration: 5000 });
+                } else if (data['status'] === "Payment Pending") {
+                    notyf.open({ type: 'warning', message: "Deposit Pending", duration: 5000 });
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX request failed:", textStatus, errorThrown);
+                notyf.error({ message: "An error occurred. Please try again.", duration: 5000 });
+            });
+        }
+
+        // Function to attach event listeners
+        function attachPendingButtonListeners() {
+            // Use a class selector instead of an ID
+            $('.pending-button').on('click', handlePendingButtonClick);
+        }
+
+        $(document).ready(function() {
+          const url = new URL(document.URL);
+          const username = url.pathname.split('/').pop();
+          /* Initiate Datatables */
+          var table = $('#transaction').DataTable({
+              responsive: true,
+              ajax: {
+              type: "GET",
+              url: '/admin_load_transactions',
+              data : { username :username},
+              dataSrc: function(json) {
+                  // Check if the response was successful
+                  if (json.data === "Login Required") {
+                  /* Reload Page */
+                  location.reload();
+                  } else {
+                  return json.data;
+                  }
+              }
+              },
+
+              columns: [
+              { data: 'id' },
+              { data: 'date' },
+              { data: 'operation' },
+              { data: 'amount' },
+              { data: 'status' },
+              { data: 'balance' }
+              ],
+              order: [[1, "desc"]]
+          });
+          attachPendingButtonListeners();
+        })
+    </script>
+{% endblock %}

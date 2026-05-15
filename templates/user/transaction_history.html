@@ -1,0 +1,74 @@
+{% extends "user/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block head %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- [Page specific CSS] start --><!-- data tables css -->
+    <link rel="stylesheet" href="/static/assets/css/plugins/dataTables.bootstrap5.min.css">
+
+{% endblock %}
+{% block main_content %}
+     <div class="row">
+        <div class="col-md-12 col-xl-12 d-flex" id="deposit_history">
+        <div class="card flex-fill w-100">
+            <div class="card-header">
+                <h5 class="card-title mb-2">Order History</h5>
+            </div>
+            <div class="card-body">
+                <!-- Table with stripped rows -->
+                <div class="table-responsive px-4">
+                          <table class="table table-bordered datatable display responsive nowrap" id="transaction" width="100%">
+                              <thead>
+                                <tr>
+                                    <th>
+                                        <b>ID</b>
+                                    </th>
+                                    <th data-type="date" data-format="YYYY/DD/MM">Date</th>
+                                    <th>Operation</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Balance</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+
+                              </tbody>
+                            </table>
+                      </div>
+                <!-- End Table with stripped rows -->
+            </div>
+        </div>
+    </div>
+     </div>
+{% endblock %}
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- datatable Js -->
+    <script src="/static/assets/js/plugins/dataTables.min.js"></script>
+    <script src="/static/assets/js/plugins/dataTables.bootstrap5.min.js"></script>
+    <script>
+		document.addEventListener("DOMContentLoaded", function() {
+            /* Initiate Datatables */
+            const table = $('#transaction').DataTable({
+                responsive: true,
+                ajax: {
+                    type: "GET",
+                    url: '/load-transactions',
+                    data: JSON.stringify({
+                            username: document.URL.split('/')[document.URL.split('/').length - 1]
+                        }
+                    ),
+                    encode: true
+                },
+                columns: [
+                    {data: 'id'},
+                    {data: 'date'},
+                    {data: 'operation'},
+                    {data: 'amount'},
+                    {data: 'status'},
+                    {data: 'balance'}
+                ]
+            });
+        });
+	</script>
+{% endblock %}

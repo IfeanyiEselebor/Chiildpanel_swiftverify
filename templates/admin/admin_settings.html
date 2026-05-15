@@ -1,0 +1,286 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Settings{% endblock %}
+{% block head %}
+      <!-- DataTables -->
+  <link rel="stylesheet" href="/static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Notyf CSS File -->
+    <link rel="stylesheet" type="text/css" href="/static/plugins/notyf/notyf.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+{% endblock %}
+{% block main_content %}
+    <div class="row">
+          <div class="col-12">
+            <!-- /.row -->
+            <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-gear "></i>&nbsp;&nbsp;Settings
+            </h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-5 col-sm-3">
+                <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+                  <a class="nav-link active" id="vert-tabs-site_settings-tab" data-toggle="pill" href="#vert-tabs-site_settings" role="tab" aria-controls="vert-tabs-site_settings" aria-selected="true">Site Settings</a>
+                  <a class="nav-link" id="vert-tabs-parent_api-tab" data-toggle="pill" href="#vert-tabs-parent_api" role="tab" aria-controls="vert-tabs-parent_api" aria-selected="false">Parent Platform</a>
+                  <a class="nav-link" id="vert-tabs-change_password-tab" data-toggle="pill" href="#vert-tabs-change_password" role="tab" aria-controls="vert-tabs-change_password" aria-selected="false">Change Password</a>
+                </div>
+              </div>
+              <div class="col-7 col-sm-9">
+                <div class="tab-content" id="vert-tabs-tabContent">
+                    <div class="tab-pane text-left fade show active" id="vert-tabs-site_settings" role="tabpanel" aria-labelledby="vert-tabs-site_settings-tab">
+                     <form>
+                         <div class="form-group">
+                            <label for="profit_input">Profit</label>
+                            <input type="text" class="form-control" id="profit_input" placeholder="{{ profit }}">
+                        </div>
+                         <button type="button" class="btn btn-success float-right" id="site_update">Update</button>
+                     </form>
+                    </div>
+                    <div class="tab-pane fade" id="vert-tabs-parent_api" role="tabpanel" aria-labelledby="vert-tabs-parent_api-tab">
+                        <div class="alert alert-info">
+                            <strong>What is this?</strong>
+                            <p class="mb-0 small">
+                                Your panel authenticates against the SwiftVerifyNG parent platform using this API key.
+                                The key normally rotates automatically via webhook from the parent — only use this form for the
+                                initial bootstrap or if a rotation has gone wrong (signature failures).
+                            </p>
+                        </div>
+
+                        <form>
+                            <div class="form-group">
+                                <label for="parent_api_key_current">Current Key</label>
+                                <input type="text" class="form-control" id="parent_api_key_current"
+                                       value="{% if parent_api_key_masked %}{{ parent_api_key_masked }}{% else %}— not set —{% endif %}"
+                                       readonly style="font-family:monospace;background:#f8f9fa;">
+                                {% if api_key_rotated_at %}
+                                <small class="form-text text-muted">Last rotated: {{ api_key_rotated_at }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="parent_api_key_new">Replace With</label>
+                                <input type="text" class="form-control" id="parent_api_key_new"
+                                       placeholder="Paste new key from SwiftVerifyNG → Settings → API Key"
+                                       autocomplete="off" spellcheck="false"
+                                       style="font-family:monospace;letter-spacing:.5px;">
+                                <small class="form-text text-muted">
+                                    Replacing the key here does NOT notify the parent — only fix mismatches this way.
+                                    For normal rotations, click "Regenerate Key" on the parent's settings page.
+                                </small>
+                            </div>
+                            <button type="button" class="btn btn-success float-right" id="parent_api_update">Update Key</button>
+                        </form>
+
+                        <hr style="margin-top:80px;">
+
+                        <h5>Webhook URLs to register on the parent</h5>
+                        <p class="small text-muted">
+                            Open <a href="https://swiftverifyng.com/settings" target="_blank">SwiftVerifyNG Settings → API Key</a>
+                            and paste these two URLs into the matching fields. Without them, your panel won't receive
+                            real-time code updates or key rotations.
+                        </p>
+                        <div class="form-group">
+                            <label class="small text-muted">Key-Rotation Webhook</label>
+                            <input type="text" class="form-control" readonly id="rotate_webhook_url"
+                                   value="https://{{ request.host }}/webhook/rotate-api-key"
+                                   style="font-family:monospace;background:#f8f9fa;">
+                        </div>
+                        <div class="form-group">
+                            <label class="small text-muted">Order-Event Webhook</label>
+                            <input type="text" class="form-control" readonly id="event_webhook_url"
+                                   value="https://{{ request.host }}/webhook/order-event"
+                                   style="font-family:monospace;background:#f8f9fa;">
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="vert-tabs-change_password" role="tabpanel" aria-labelledby="vert-tabs-change_password-tab">
+                    <form>
+                        <div class="form-group">
+                            <label for="current_pwd">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="current_pwd">
+                                <div class="input-group-append">
+                                  <button class="btn btn-secondary password-toggle" type="button">
+                                    <i class="fas fa-eye-slash"></i>
+                                  </button>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label for="pwd">Password</label>
+                             <div class="input-group">
+                                <input type="password" class="form-control" id="pwd">
+                                <div class="input-group-append">
+                                  <button class="btn btn-secondary password-toggle" type="button">
+                                    <i class="fas fa-eye-slash"></i>
+                                  </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_pwd">Confirm Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirm_pwd">
+                                <div class="input-group-append">
+                                  <button class="btn btn-secondary password-toggle" type="button">
+                                    <i class="fas fa-eye-slash"></i>
+                                  </button>
+                                </div>
+                            </div>
+                        </div>
+                       <button type="button" class="btn btn-success float-right" id="change_pwd">Update</button>
+                    </form>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+          </div>
+        </div>
+    <!-- /.row -->
+{% endblock %}
+{% block script %}
+    <!-- Datatables JS File -->
+    <script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <!-- Bootstrap Switch -->
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+    <!-- Notyf JS File -->
+    <script src="/static/plugins/notyf/notyf.min.js"></script>
+    <script>
+      // Payment Method Update
+      document.addEventListener("DOMContentLoaded", function() {
+          // Password Toggle Functionality
+          $('.password-toggle').click(function() {
+              const $input = $(this).parents('.input-group').find('input');
+              const $icon = $(this).find('i');
+
+              $(this).toggleClass('active');
+            if ($(this).hasClass('active')) {
+              $input.attr('type', 'text');
+              $icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            } else {
+              $input.attr('type', 'password');
+              $icon.removeClass('fa-eye').addClass('fa-eye-slash');
+            }
+          });
+          // Notification setup
+            const notyf = new Notyf({
+              duration: 1000,
+              position: { x: 'right', y: 'top' },
+              types: [
+                  {
+                      type: "warning",
+                        backgroundColor: "#ffc107",
+                        icon: {
+                            className: "notyf__icon--error",
+                            tagName: "i"
+                        }
+                  }
+              ]
+            });
+          // Site Settings Form Handling
+          $('#site_update').click(function() {
+              document.getElementById("site_update").disabled = true;
+              $.ajax({
+                  url: '/admin/site_update',
+                  method: 'POST',
+                  contentType: 'application/json',
+                  data: JSON.stringify({
+                      'profit': $("#profit_input").val().trim() || null,
+                  }),
+                  dataType: 'json',
+                  success: function(response) {
+                    if (response['status'] === 'success'){
+                        document.getElementById("site_update").disabled = false;
+                        $('#profit_input').attr('placeholder', response['profit']);
+                        $("#profit_input").val("");
+                        notyf.success({ message: "Site settings updated successfully!", duration: 3000});
+                    }
+                    if (response['message'] === 'No changes detected'){
+                        $("#profit_input").val("");
+                    }
+                  },
+                  error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                  }
+              });
+          });
+
+          // Parent API Key — manual override
+          $('#parent_api_update').click(function() {
+              var newKey = $('#parent_api_key_new').val().trim();
+              if (!newKey) {
+                  notyf.error({ message: 'Paste a key first.', duration: 3000});
+                  return;
+              }
+              if (!confirm('Replacing the parent API key will not notify the parent. Only do this if a rotation has gone wrong. Continue?')) {
+                  return;
+              }
+              var btn = document.getElementById("parent_api_update");
+              btn.disabled = true;
+              $.ajax({
+                  url: '/admin/update-parent-api-key',
+                  method: 'POST',
+                  data: { api_key: newKey },
+                  dataType: 'json',
+                  success: function(response) {
+                      if (response.status === 'success') {
+                          $('#parent_api_key_current').val('••••••••' + response.last4);
+                          $('#parent_api_key_new').val('');
+                          notyf.success({ message: 'Parent API key updated.', duration: 3000});
+                      } else {
+                          notyf.error({ message: response.message || 'Update failed.', duration: 3000});
+                      }
+                  },
+                  error: function(xhr) {
+                      var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Network error.';
+                      notyf.error({ message: msg, duration: 3000});
+                  },
+                  complete: function() { btn.disabled = false; }
+              });
+          });
+          // Change Password Form Handling
+          $('#change_pwd').click(function() {
+              document.getElementById("change_pwd").disabled = true;
+               if ($("input[id='pwd']").val() !== $("input[id='confirm_pwd']").val()) {
+                   notyf.error({ message: "Password doesn't match!", duration: 3000});
+                    document.getElementById("change_pwd").disabled = false;
+                    return;
+               }
+              $.ajax({
+                  url: '/admin/password_update',
+                  method: 'POST',
+                  contentType: 'application/json',
+                  data: JSON.stringify({
+                      'password' : $("#pwd").val().trim() || null,
+                      'current_password': $("#current_pwd").val().trim() || null
+                  }),
+                  dataType: 'json',
+                  success: function(response) {
+                    if (response['status'] === 'success'){
+                        $("#pwd").val("");
+                        $("#confirm_pwd").val("");
+                        $("#current_pwd").val("");
+                        document.getElementById("change_pwd").disabled = false;
+                        notyf.success({ message: "Password Changed successfully!", duration: 3000});
+                    }
+                    if (response['status'] === 'Incorrect Password'){
+                        document.getElementById("change_pwd").disabled = false;
+                        notyf.error({ message: "Incorrect Password!", duration: 3000});
+                    }
+                  },
+                  error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                  }
+              });
+          });
+      });
+    </script>
+{% endblock %}

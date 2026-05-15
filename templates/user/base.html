@@ -1,0 +1,259 @@
+{% set title_content %}
+    {% block title %}{% endblock %}
+{% endset %}
+
+<!doctype html>
+<html lang="en">
+   <!-- [Head] start -->
+   <head>
+        <title> {{ title_content }} | {{ SITE_NAME }}</title>
+        <!-- [Meta] -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,minimal-ui">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="Able Pro is trending dashboard template made using Bootstrap 5 design framework. Able Pro is available in Bootstrap, React, CodeIgniter, Angular,  and .net Technologies.">
+        <meta name="keywords" content="Bootstrap admin template, Dashboard UI Kit, Dashboard Template, Backend Panel, react dashboard, angular dashboard">
+        <meta name="author" content="CipherTech">
+        <!-- [Favicon] icon -->
+        <link rel="icon" href="{{ SITE_FAVICON }}" type="image/x-icon">
+        <!-- [Font] Family -->
+        <link rel="stylesheet" href="/static/assets/fonts/inter/inter.css" id="main-font-link">
+        <!-- [phosphor Icons] https://phosphoricons.com/ -->
+        <link rel="stylesheet" href="/static/assets/fonts/phosphor/duotone/style.css">
+        <!-- [Tabler Icons] https://tablericons.com -->
+        <link rel="stylesheet" href="/static/assets/fonts/tabler-icons.min.css">
+        <!-- [Feather Icons] https://feathericons.com -->
+        <link rel="stylesheet" href="/static/assets/fonts/feather.css">
+        <!-- [Font Awesome Icons] https://fontawesome.com/icons -->
+        <link rel="stylesheet" href="/static/assets/fonts/fontawesome.css">
+        <!-- [Material Icons] https://fonts.google.com/icons -->
+        <link rel="stylesheet" href="/static/assets/fonts/material.css">
+        <!-- [Template CSS Files] -->
+        <link rel="stylesheet" href="/static/assets/css/style.css" id="main-style-link">
+        <script src="/static/assets/js/tech-stack.js"></script>
+        <link rel="stylesheet" href="/static/assets/css/style-preset.css">
+        <!-- Notyf CSS File -->
+        <link rel="stylesheet" type="text/css" href="/static/assets/notyf/notyf.min.css">
+
+        <!-- Notyf JS File -->
+        <script src="/static/assets/notyf/notyf.min.js"></script>
+
+       {% block head %}{% endblock %}
+   </head>
+   <!-- [Head] end --><!-- [Body] Start -->
+   <body data-pc-preset="{{ THEME_COLOUR }}" data-pc-sidebar-caption="{{ THEME_SIDEBAR_CAPTION }}" data-pc-layout="{{ THEME_LAYOUT }}" data-pc-direction="{{ THEME_LAYOUT_DIRECTION }}" data-pc-theme_contrast="{{ THEME_CONTRAST }}" data-pc-theme="{{ THEME_MODE }}">
+      <!-- [ Pre-loader ] start -->
+      <div class="loader-bg">
+         <div class="loader-track">
+            <div class="loader-fill"></div>
+         </div>
+      </div>
+      <!-- [ Pre-loader ] End --><!-- [ Sidebar Menu ] start -->
+      <nav class="pc-sidebar">
+         <div class="navbar-wrapper">
+            <div class="m-header">
+               <a href="/static/dashboard/index.html" class="b-brand text-primary">
+                  <!-- ========   Change your logo from here   ============ --> <img src="{{ SITE_LOGO }}" class="img-fluid logo-lg" alt="logo">
+               </a>
+            </div>
+            <div class="navbar-content">
+               <ul class="pc-navbar">
+                  <li class="pc-item">
+                     <a href="/dashboard" class="pc-link">
+                        <span class="pc-micon">
+                           <svg class="pc-icon">
+                              <use xlink:href="#custom-status-up"></use>
+                           </svg>
+                        </span>
+                        <span class="pc-mtext">Dashboard</span>
+                     </a>
+                  </li>
+                   <li class="pc-item">
+                     <a href="/fund-wallet" class="pc-link">
+                        <span class="pc-micon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-credit-card align-middle"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                        </span>
+                        <span class="pc-mtext">Fund Wallet</span>
+                     </a>
+                  </li>
+                   <li class="pc-item">
+                     <a href="/history" class="pc-link">
+                         <span class="pc-micon">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag align-middle"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                         </span>
+                             <span class="pc-mtext">Transaction History</span>
+                     </a>
+                  </li>
+                    <li class="pc-item">
+                     <a href="/settings" class="pc-link">
+                         <span class="pc-micon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings align-middle"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                         </span>
+                             <span class="pc-mtext">Settings</span>
+                     </a>
+                  </li>
+                    <li class="pc-item">
+                     <a href="/logout" class="pc-link">
+                         <span class="pc-micon">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out align-middle"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                         </span>
+                             <span class="pc-mtext">Log out</span>
+                     </a>
+                  </li>
+               </ul>
+            </div>
+         </div>
+      </nav>
+      <!-- [ Sidebar Menu ] end --><!-- [ Header Topbar ] start -->
+      <header class="pc-header">
+         <div class="header-wrapper">
+            <!-- [Mobile Media Block] start -->
+            <div class="me-auto pc-mob-drp">
+               <ul class="list-unstyled">
+                  <!-- ======= Menu collapse Icon ===== -->
+                  <li class="pc-h-item pc-sidebar-collapse"><a href="#" class="pc-head-link ms-0" id="sidebar-hide"><i class="ti ti-menu-2"></i></a></li>
+                  <li class="pc-h-item pc-sidebar-popup"><a href="#" class="pc-head-link ms-0" id="mobile-collapse"><i class="ti ti-menu-2"></i></a></li>
+               </ul>
+            </div>
+            <!-- [Mobile Media Block end] -->
+            <div class="ms-auto">
+               <ul class="list-unstyled">
+                   <li class="dropdown pc-h-item" style="position: relative; margin: 0 10px;">
+   <a href="/fund-wallet" role="button" aria-haspopup="false" aria-expanded="false" style="display: flex; align-items: center; text-decoration: none; color: #ffffff; background-color: #2c3e50; padding: 8px 12px; border-radius: 4px; transition: background-color 0.3s ease;">
+      <svg class="pc-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="white" style="width: 24px; height: 24px; margin-right: 8px;">
+         <path d="M20 6h-2V4c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-4 0H4V4h12v2zm4 14H4V8h16v12zM16 14c0-1.1-.9-2-2-2h-2c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h2c1.1 0 2-.9 2-2v-2z"></path>
+      </svg>
+      <span id="wallet_balance" style="font-size: 16px; font-weight: bold; color: #ecf0f1;">{{ wallet_balance }}</span>
+   </a>
+</li>
+               </ul>
+            </div>
+         </div>
+      </header>
+      <!-- [ Header ] end --><!-- [ Main Content ] start -->
+      <div class="pc-container">
+         <div class="pc-content">
+            <!-- [ Main Content ] start -->
+             {% block main_content %}{% endblock %}
+            <!-- [ Main Content ] end -->
+         </div>
+      </div>
+      <!-- [ Main Content ] end -->
+      <footer class="pc-footer">
+         <div class="footer-wrapper container-fluid">
+            <div class="row">
+               <div class="col my-1">
+               </div>
+               <div class="col-auto my-1">
+                  <ul class="list-inline footer-link mb-0">
+                     <li class="list-inline-item"><a href="/">Home</a></li>
+                     <li class="list-inline-item"><a href="{{ SITE_TELEGRAM_SUPPORT }}" target="_blank">Support</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </footer>
+      <!-- Bootstrap Modal -->
+      <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Change Your Password</h5>
+            </div>
+            <div class="modal-body">
+                <p>You are using a temporary password. Please set a new password to continue.</p>
+                <form id="changePasswordForm">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submitPasswordChange">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+      <!-- [Page Specific JS] start -->
+      {% block script %}{% endblock %}
+      <!-- [Page Specific JS] end --><!-- Required Js -->
+      <script src="/static/assets/js/plugins/popper.min.js"></script>
+      <script src="/static/assets/js/plugins/simplebar.min.js"></script>
+      <script src="/static/assets/js/plugins/bootstrap.min.js"></script>
+      <script src="/static/assets/js/icon/custom-font.js"></script>
+      <script src="/static/assets/js/script.js"></script>
+      <script src="/static/assets/js/theme.js"></script>
+      <script src="/static/assets/js/plugins/feather.min.js"></script>
+        <!-- Assuming the modal HTML remains the same, minus the #errorMessage div -->
+    <script>
+        $(document).ready(function() {
+            // Initialize Notyf
+            const notyf = new Notyf({
+                duration: 4000, // Notification duration in milliseconds
+                position: { x: 'right', y: 'top' }, // Position of notifications
+                ripple: true // Enable ripple effect
+            });
+
+            // Check if temp_password exists in localStorage
+            if (localStorage.getItem("temp_password") === 'True') {
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'), {
+                    backdrop: 'static', // Prevents closing by clicking outside
+                    keyboard: false     // Prevents closing with ESC key
+                });
+                modal.show();
+
+                // Handle form submission
+                $('#submitPasswordChange').on('click', function() {
+            const currentPassword = $('#currentPassword').val(); // New field
+            const newPassword = $('#newPassword').val();
+            const confirmPassword = $('#confirmPassword').val();
+
+            if (!currentPassword) {
+                notyf.error('Please enter your current password');
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                notyf.error('Passwords do not match');
+                return;
+            }
+            if (newPassword.length < 6) {
+                notyf.error('Password must be at least 6 characters');
+                return;
+            }
+
+            $.ajax({
+                url: '/change_password',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+                success: function(response) {
+                    if (response.success) {
+                        localStorage.removeItem("temp_password");
+                        modal.hide();
+                        notyf.success('Password updated successfully');
+                        setTimeout(() => window.location.reload(), 2000);
+                    } else {
+                        notyf.error(response.error);
+                    }
+                },
+                error: function() {
+                    notyf.error('Server error. Please try again.');
+                }
+            });
+        });
+            }
+        });
+    </script>
+   </body>
+   <!-- [Body] end -->
+</html>

@@ -1,0 +1,476 @@
+{% extends "user/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block head %}<!-- [Page specific CSS] start --><!-- data tables css -->
+    <link rel="stylesheet" href="/static/assets/css/plugins/dataTables.bootstrap5.min.css">
+
+{% endblock %}
+{% block main_content %}
+    <div class="row">
+        <div class="col-md-6 col-xl-6 d-flex" id="add_funds">
+            <div class="card flex-fill w-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Add Funds</h5>
+                </div>
+                <div class="card-body">
+                    <div class="">
+                        <form class="row g-3" id="add_funds_form">
+                            <div class="col-lg-12 col-md-12">
+                              <label for="youramount" class="form-label">Enter the Amount (NGN)</label>
+                              <div class="input-group has-validation">
+                                <span class="input-group-text">₦</span>
+                                <input type="text" name="youramount" class="form-control" id="youramount" placeholder="Please enter your deposit amount." required>
+                                <div class="invalid-feedback"></div>
+                              </div>
+
+                               <label class="my-2 mt-4">Select Payment mode</label>
+                              <select name="type" class="form-select" id="payment_type">
+                                  {% if payment['method']['vpay'] | int  %}
+                                      <option value="vpay" {{ 'selected' if payment['method']['vpay'] | int else '' }}>Instant Via Vpay</option>
+                                  {% endif %}
+                                  {% if payment['method']['korapay'] | int  %}
+                                      <option value="korapay" {{ '' if payment['method']['vpay'] | int else 'selected' }}>Instant Via Korapay</option>
+                                  {% endif %}
+                                  {% if payment['method']['manual_payment'] | int  %}
+                                      <option value="manualpayment">Manual</option>
+                                  {% endif %}
+                              </select>
+                            </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="alert alert-primary" role="alert">
+                                   <div class="alert-message">
+                                        <div class="fs-10px"> Add more funds to wallet,as Funds are completely safe with us.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12">
+                              <button class="btn btn-primary w-100" type="submit" id="add_funds_button">Add Funds</button>
+                            </div>
+                        </form>
+                          <br>
+                          <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-6 d-flex" id="deposit_history">
+            <div class="card flex-fill w-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-2">History</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Table with stripped rows -->
+                    <div class="table-responsive px-4">
+                      <table class="table table-striped nowrap" id="orders" style="width:100%">
+                          <thead>
+                            <tr>
+                              <th>
+                                <b>TRANSACTION ID</b>
+                              </th>
+                              <th data-type="date" data-format="YYYY/DD/MM">
+                                  Date
+                              </th>
+                              <th>Amount</th>
+                              <th>Status</th>
+                              <th>Payment Type</th>
+                              <th>Reason</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+
+                          </tbody>
+                        </table>
+                    </div>
+                    <!-- End Table with stripped rows -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-xl-12 d-none" id="manual_funds">
+            <div class="card flex-fill w-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Manual Funding</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-center mt-2">You have requested <b class="text-success"><span id="amount_id"></span> NGN</b>, Please pay <b class="text-success"><span id="amount_id"></span> NGN
+                                                </b> for successful payment</p>
+                        <h5 class="text-center mb-4">Please follow the instruction below</h5>
+                        <div class="card border border-dark mb-4">
+                            <div class="card-body text-center">
+                                <label class="text-center fw-bold">Account Number</label>
+                                <div style="display: flex; justify-content: space-between; align-items: center;" class="text-center">
+                                  <h2 style="font-size: 16px; margin: 0 auto;">{{ payment['manual_payment_account'] }}  <i class="fa fa-copy" onclick="copyToClipboard(account_number)"></i></h2>
+                                </div>
+                                <span style="display: none;" id="account_number">{{ payment['manual_payment_account'] }}</span>
+                                <hr>
+                                <label class="text-center fw-bold">Account Number</label>
+                                <h2 style="font-size: 16px">{{ payment['manual_payment_account_name'] }} </h2>
+                                <hr>
+                                <label class="text-center fw-bold">Bank Name</label>
+                                <h2 style="font-size: 16px">{{ payment['manual_payment_bank'] }}</h2>
+                        </div>
+                        </div>
+                        <div class="card border border-dark mb-4">
+                          <div class="card-body">
+                            <form enctype="multipart/form-data">
+                              <p id="msg" class="d-none text-danger text-center"> </p>
+                              <label class="my-3">Sender Name</label>
+                              <input class="form-control py-1" name="sender_name" id="sender_name" required>
+                              <label class="my-3">Debit Screenshot</label>
+                              <input type="file" name="receipt" id="receipt" class="form-control" accept="image/*,.jpg,.jpeg,.png" required>
+                              <button type="submit" style="border: 0px; color: white;" id="submit_manual" class="btn btn-primary text-center w-100 my-4 btn-rounded">
+                                <svg class="cart me-4" width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M17.5158 2.01275C17.9478 0.81775 16.7898 -0.34025 15.5948 0.0927503L0.989804 5.37475C-0.209196 5.80875 -0.354196 7.44475 0.748804 8.08375L5.4108 10.7828L9.5738 6.61975C9.76241 6.43759 10.015 6.3368 10.2772 6.33908C10.5394 6.34135 10.7902 6.44652 10.9756 6.63193C11.161 6.81734 11.2662 7.06815 11.2685 7.33035C11.2708 7.59255 11.17 7.84515 10.9878 8.03375L6.8248 12.1968L9.5248 16.8587C10.1628 17.9617 11.7988 17.8158 12.2328 16.6178L17.5158 2.01275Z" fill="white"></path>
+                                </svg>
+                                PAY NOW
+                                <span class="spinner"></span>
+                            </button>
+                            </form>
+                          </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <!-- datatable Js -->
+    <script src="/static/assets/js/plugins/dataTables.min.js"></script>
+    <script src="/static/assets/js/plugins/dataTables.bootstrap5.min.js"></script>
+    <!-- Vpay JS File -->
+    <script src="/static/plugins/Vpay/initialise.js"></script>
+    <!-- Korapay JS File -->
+    <script src="https://korablobstorage.blob.core.windows.net/modal-bucket/korapay-collections.min.js"></script>
+    <!-- Page Specific JS File -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            /**Initiate Datatables*/
+            const table = $('#orders').DataTable({
+                responsive: true,
+                'ajax': {
+                    "type": "GET",
+                    "url": '/load-orders',
+                    dataSrc: function (json) {
+                        // Check if the response was successful
+                        if (json['status'] === "Login Required") {
+                            /* Reload Page */
+                            location.reload();
+                        } else {
+                            return json.data;
+                        }
+                    }
+                },
+                columns: [
+                    {data: 'transaction_id'},
+                    {data: 'date'},
+                    {data: 'amount'},
+                    {data: 'status'},
+                    {data: 'payment_type'},
+                    {data: 'reason'}
+                ],
+                "order": [[1, "dsc"]]
+            });
+            // Notification setup
+            const notyf = new Notyf({
+              duration: 1000,
+              position: { x: 'right', y: 'top' },
+              types: [
+                  {
+                      type: "warning",
+                        backgroundColor: "#ffc107",
+                        icon: {
+                            className: "notyf__icon--error",
+                            tagName: "i"
+                        }
+                  }
+              ]
+            });
+            /* Query Transaction Status*/
+            $(document).on("click", "#query-btn", function(){
+                $(this).prop('disabled', true);
+                let ip_address;
+                fetch('https://api.ipify.org?format=json')
+                  .then(response => response.json())
+                  .then(data => {
+                    ip_address = data.ip;
+                    $.ajax({
+                      type: "POST",
+                      url: "/add-funds",
+                      contentType: "application/json",
+                      data: JSON.stringify({
+                        transaction_id: $(this).data("transaction_id"),
+                        ip_address: ip_address
+                      }),
+                      encode: true,
+                    }).done(function(data) {
+                      const statusText = document.getElementById("status-text");
+                      if (data['status'] === "Payment Successful") {
+                        notyf.success({ message: "Deposit Successful!", duration: 5000});
+                        $("#wallet_balance").text(data['amount'])
+                        table.ajax.reload();
+                        document.getElementById("add_funds_button").disabled = false;
+                        $("input[name='youramount']").val("")
+                      }
+                      if (data['status'] === "Payment Failed") {
+                        notyf.error({ message: "Deposit Failed", duration: 5000});
+                        table.ajax.reload();
+                        document.getElementById("add_funds_button").disabled = false;
+                        $("input[name='youramount']").val("")
+                      }
+                      if (data['status'] === "Payment Pending") {
+                        notyf.open({ type: 'warning', message: "Deposit Pending", duration: 5000});
+                        table.ajax.reload();
+                        document.getElementById("add_funds_button").disabled = false;
+                        $("input[name='youramount']").val("")
+                      }
+                    });
+                  });
+            });
+            $("#add_funds_form").submit(function(event) {
+            event.preventDefault();
+            const amount = $("input[name='youramount']").val();
+            const paymentMethod = $('#payment_type').val();
+            // Call the payment gateway API or perform the payment logic here
+            switch (paymentMethod) {
+              case 'vpay':
+                document.getElementById("add_funds_button").disabled = true;
+                $.ajax({
+                  type: "POST",
+                  url: "/load-wallet",
+                  contentType: "application/json",
+                  data: JSON.stringify({
+                    amount: amount,
+                    payment_type : 'instant',
+                    processor: paymentMethod
+                  }),
+                  encode: true,
+                }).done(function(data) {
+                    if (data === "Login Required") {
+                        /* Move to Login Page */
+                        const baseUrl = window.location.origin;
+                        window.location.replace(baseUrl + "/login");
+                    } else {
+                        const transactionref = data['transaction_id'];
+                        (() => {
+                            const options = {
+                                amount: parseInt(data['amount']),
+                                currency: 'NGN',
+                                key: '{{ vpay_public_key }}',
+                                domain: 'live',
+                                email: data['email'],
+                                transactionref: transactionref,
+                                customer_logo: 'https://biggygram01.pythonanywhere.com/static/img/email_logo.png',
+                                customer_service_channel: 'https://t.me/SwiftVerifyNGcc',
+                                txn_charge: 0,
+                                txn_charge_type: 'flat',
+                                onSuccess: function (response) {
+                                    let ip_address;
+                                    fetch('https://api.ipify.org?format=json')
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            ip_address = data.ip;
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "/add-funds",
+                                                contentType: "application/json",
+                                                data: JSON.stringify({
+                                                    transaction_id: transactionref,
+                                                    ip_address: ip_address
+                                                }),
+                                                encode: true,
+                                            }).done(function (data) {
+                                                const statusText = document.getElementById("status-text");
+                                                if (data['status'] === "Payment Successful") {
+                                                    $("#wallet_balance").text(data['amount'])
+                                                    table.ajax.reload();
+                                                    notyf.success({ message: "Deposit Successful", duration: 5000});
+                                                    document.getElementById("add_funds_button").disabled = false;
+                                                    $("input[name='youramount']").val("")
+                                                }
+                                                if (data['status'] === "Payment Failed") {
+                                                    notyf.error({ message: "Deposit Failed", duration: 5000});
+                                                    table.ajax.reload();
+                                                    document.getElementById("add_funds_button").disabled = false;
+                                                    $("input[name='youramount']").val("")
+                                                }
+                                                if (data['status'] === "Payment Pending") {
+                                                    notyf.open({ type: 'warning', message: "Deposit Pending", duration: 5000});
+                                                    table.ajax.reload();
+                                                    document.getElementById("add_funds_button").disabled = false;
+                                                    $("input[name='youramount']").val("")
+                                                }
+                                            });
+                                        });
+                                },
+                                onExit: function () {
+                                    $("input[name='youramount']").val("")
+                                    $('#payment_type').prop('selectedIndex', 0);
+                                    document.getElementById("add_funds_button").disabled = false;
+                                }
+                            }
+                            if (window.VPayDropin) {
+                                const {open, exit} = VPayDropin.create(options);
+                                open();
+                            }
+                        })();
+                    }
+                });
+                break;
+              case 'korapay':
+                document.getElementById("add_funds_button").disabled = true;
+                $.ajax({
+                  type: "POST",
+                  url: "/load-wallet",
+                  contentType: "application/json",
+                  data: JSON.stringify({
+                    amount: amount,
+                    payment_type : 'instant',
+                    processor: paymentMethod
+                  }),
+                  encode: true,
+                }).done(function(data) {
+                    if (data === "Login Required"){
+                        /* Move to Login Page */
+                        const baseUrl = window.location.origin;
+                        window.location.replace(baseUrl +"/login");
+                    } else {
+                        let successReceived  = true;
+                        const transactionref = data['transaction_id'];
+                        (() => {
+                            window.Korapay.initialize({
+                                key: "{{ korapay_public_key }}",
+                                reference: transactionref,
+                                amount: parseInt(data['amount']),
+                                currency: "NGN",
+                                customer: {
+                                  name: data['username'],
+                                  email: data['email']
+                                },
+                                onSuccess: function (data) {
+                                    paymentdata = data
+                                    if (successReceived){
+                                        successReceived  = false;
+                                        let ip_address;
+                                      fetch('https://api.ipify.org?format=json')
+                                        .then(response => response.json())
+                                        .then(data => {
+                                          ip_address = data.ip;
+                                          $.ajax({
+                                            type: "POST",
+                                            url: "/add-funds",
+                                            contentType: "application/json",
+                                            data: JSON.stringify({
+                                              transaction_id: transactionref,
+                                              ip_address: ip_address
+                                            }),
+                                            encode: true,
+                                          }).done(function(data) {
+                                            const statusText = document.getElementById("status-text");
+                                            console.log(data);
+                                            if (data['status'] === "Payment Successful") {
+                                                notyf.success({ message: "Deposit Successful!", duration: 5000});
+                                                table.ajax.reload();
+                                                document.getElementById("add_funds_button").disabled = false;
+                                                $("input[name='youramount']").val("")
+                                                $("#wallet_balance").text(data['amount'])
+                                            }
+                                            if (data['status'] === "Payment Failed") {
+                                                notyf.error({ message: "Deposit Failed", duration: 5000});
+                                                table.ajax.reload();
+                                                document.getElementById("add_funds_button").disabled = false;
+                                                $("input[name='youramount']").val("")
+                                            }
+                                            if (data['status'] === "Payment Pending") {
+                                                notyf.open({ type: 'warning', message: "Deposit Pending", duration: 5000});
+                                                table.ajax.reload();
+                                                document.getElementById("add_funds_button").disabled = false;
+                                                $("input[name='youramount']").val("")
+
+                                            }
+                                            successReceived  = true;
+                                          });
+                                        });
+                                    }
+                                },
+                                onClose: function () {
+                                    $("input[name='youramount']").val("")
+                                    $('#payment_type').prop('selectedIndex', 0);
+                                    document.getElementById("add_funds_button").disabled = false;
+                                }
+                            });
+                        })();
+                    }
+                });
+                break;
+              case 'manualpayment':
+                document.getElementById("add_funds_button").disabled = true;
+                $('span[id="amount_id"]').text(amount);
+                const add_funds = document.getElementById('add_funds');
+                add_funds.classList.add("d-none");
+                add_funds.classList.remove("d-flex");
+                const deposit_history = document.getElementById('deposit_history');
+                deposit_history.classList.add("d-none");
+                deposit_history.classList.remove("d-flex");
+                const manuals_funding = document.getElementById('manual_funds');
+                manuals_funding.classList.remove("d-none");
+                manuals_funding.classList.add("d-flex");
+                break;
+              default:
+                console.error(`Unsupported payment method: ${paymentMethod}`);
+            }
+        });
+            $(document).on("click", "#submit_manual", function(event){
+                document.getElementById("submit_manual").disabled = true;
+                var form_data = new FormData();
+                var ins = document.getElementById('receipt').files.length;
+                 // Validate required fields
+                const senderName = document.getElementById('sender_name').value.trim();
+                const receipt = document.getElementById('receipt').files;
+                const amount = document.getElementById('amount_id').textContent.trim();
+
+                if (!senderName || receipt.length === 0 || !amount) {
+                    notyf.error({ message: "Please fill all required fields and upload a receipt.", duration: 5000 });
+                    document.getElementById("submit_manual").disabled = false;
+                    return;
+                }
+                for (let x = 0; x < ins; x++) {
+                  form_data.append("files[]", document.getElementById('receipt').files[0])
+                }
+                form_data.append("sender_name", document.getElementById('sender_name').value)
+                form_data.append("amount", document.getElementById('amount_id').textContent)
+                $.ajax({
+                  type: "POST",
+                  url: "/manual_funding",
+                  cache: false,
+                  contentType: false,
+                  processData: false,
+                  data: form_data,
+                  success: function (response) { // display success response
+                    notyf.success({ message: "You payment request is successful, you will be credited soon", duration: 5000});
+                    $("#sender_name").val('');
+                    $('input[type="file"]').val('');
+                    $("input[name='youramount']").val("")
+                    $('#payment_type').prop('selectedIndex', 0);
+                    document.getElementById("add_funds_button").disabled = false;
+                    document.getElementById("submit_manual").disabled = false;
+                    table.ajax.reload();
+                    const add_funds = document.getElementById('add_funds');
+                    add_funds.classList.remove("d-none");
+                    add_funds.classList.add("d-flex");
+                    const deposit_history = document.getElementById('deposit_history');
+                    deposit_history.classList.remove("d-none");
+                    deposit_history.classList.add("d-flex");
+                    const manuals_funding = document.getElementById('manual_funds');
+                    manuals_funding.classList.add("d-none");
+                    manuals_funding.classList.remove("d-flex");
+                  },
+                  error: function (response) {
+                    $('#msg').text(response.responseJSON['message']);
+                    document.getElementById("submit_manual").disabled = false;
+                    $('#msg').removeClass("d-none");
+                  }
+                });
+                event.preventDefault();
+          });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,505 @@
+{% extends "user/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block head %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- [Page specific CSS] start --><!-- data tables css -->
+    <link rel="stylesheet" href="/static/assets/css/plugins/dataTables.bootstrap5.min.css">
+
+{% endblock %}
+{% block main_content %}
+     <div class="row">
+         <div class="col-md-3 col-xl-2">
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Profile Settings</h5>
+                </div>
+
+                <div class="list-group list-group-flush" role="tablist">
+                    <a class="list-group-item list-group-item-action active" data-bs-toggle="list" href="#account" role="tab" aria-selected="false" tabindex="-1">
+                        Account
+                    </a>
+                    <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#password" role="tab" aria-selected="true" tabindex="-1">
+                        Password
+                    </a>
+                    <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#api_key" role="tab" aria-selected="false" tabindex="-1">
+                        API Key
+                    </a>
+                </div>
+            </div>
+        </div>
+         <div class="col-md-9 col-xl-10">
+            <div class="tab-content">
+                <div class="tab-pane fade active show" id="account" role="tabpanel">
+
+                    <div class="card">
+                        <div class="card-header">
+
+                            <h5 class="card-title mb-0">Public info</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputUsername">Username</label>
+                                            <input type="text" class="form-control" id="inputUsername" value="{{ session['username'] }}" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputUsername">Email</label>
+                                            <input type="text" class="form-control" id="inputEmail" value="{{ session['email'] }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="tab-pane fade" id="password" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Password</h5>
+
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label" for="current_pwd">Current password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="current_pwd">
+                                        <div class="input-group-append">
+                                          <button class="btn btn-secondary password-toggle" type="button">
+                                            <i class="fas fa-eye-slash"></i>
+                                          </button>
+                                        </div>
+                                    </div>
+                                    <small><a href="/forgot-password">Forgot your password?</a></small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="pwd">New password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="pwd">
+                                        <div class="input-group-append">
+                                          <button class="btn btn-secondary password-toggle" type="button">
+                                            <i class="fas fa-eye-slash"></i>
+                                          </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="confirm_pwd">Verify password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="confirm_pwd">
+                                        <div class="input-group-append">
+                                          <button class="btn btn-secondary password-toggle" type="button">
+                                            <i class="fas fa-eye-slash"></i>
+                                          </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" id="change_pwd" class="btn btn-primary float-right">Update Password</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="api_key" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">API SWIFTVERIFYNG</h5>
+                            <div class="row">
+								<div class="col-md-12 text-center">
+									<div class="my-2">
+										<div>
+											<span class="text-lg xl:text-xl">API Key</span>
+                                            <span class="font-bold text-lg xl:text-xl text-primary break-all" id="apiKey_span">{{ session['apikey'] }}</span>
+										    <button name="apiKey" id="apiKey" class="w-full md:w-auto btn btn-primary btn-sm text-xs xl:text-sm min-w-[142px]">Update API Key</button>
+                                        </div>
+									</div>
+								</div>
+							</div>
+                            <div class="accordion" id="accordionPanelsStayOpenExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#request_number" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                                        Request a number
+                                      </button>
+                                    </h2>
+                                    <div id="request_number" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne" style="">
+                                      <div class="accordion-body">
+                                          <div class="text-center">
+                                            <blockquote style="font-size: 1.2em;">
+                                                <p>
+                                                    <code>https://</code><em><code>{{ SITE_DOMAIN }}</code></em><code>/api/getNumber?api_key=$api_key&amp;service=$service&amp;country=$country&amp;pool=$pool&amp;max_price=$max_price&amp;areas=$areas</code>
+                                                </p>
+                                            </blockquote>
+                                        </div>
+                                            <p>
+                                                <strong>Parameters <br></strong>
+                                                &action=getNumber <br>
+                                                $api_key — your API key; <br>
+                                                $service — service code; <br>
+                                                $pool - pool of number to order from <br>
+                                                $max_price - the maximum price you're willing to pay for the number <br>
+                                                $areas - preferred area codes <br>
+                                            </p>
+                                            <p>
+                                                <strong>Possible mistakes<br></strong>
+                                                NO_MONEY — Not enough balance left;<br>
+                                                NO_NUMBERS - repeat a request or choose another country;<br>
+                                                BAD_SERVICE - incorrect service name;<br>
+                                                BAD_COUNTRY - incorrect country name;<br>
+                                                NO_POOL - preferred pool to order from;<br>
+                                                BAD_KEY -  check your API key; <br>
+                                            </p>
+                                          <p>
+    <strong>The example of successful answer: <br /></strong>
+</p>
+
+<pre class="highlight json tab-json" style="font-size: 1.2em;"><code><span class="p">{</span><span class="w">
+<!-- -->  </span><span class="nl">"id"</span><span class="p">:</span><span class="mi">2427</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"phone"</span><span class="p">:</span><span class="s2">"+62895320077478"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"pool"</span><span class="p">:</span><span class="s2">"Charlie"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"product"</span><span class="p">:</span><span class="s2">"Whatsapp"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"price"</span><span class="p">:</span><span class="mi">1954.55</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"status"</span><span class="p">:</span><span class="s2">"Received"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"expires"</span><span class="p">:</span><span class="s2">"2024-08-23 22:11:39"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"sms"</span><span class="p">:</span><span class="kc">null</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"created_at"</span><span class="p">:</span><span class="s2">"2024-08-23 21:51:39"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"country"</span><span class="p">:</span><span class="s2">"Indonesia"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code>
+                                      </pre>
+                                      </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#activation_status_change" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                                    Activation status changes
+                                  </button>
+                                </h2>
+                                <div id="activation_status_change" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                                  <div class="accordion-body">
+                                          <div class="text-center">
+                                            <blockquote style="font-size: 1.2em;">
+                                                <p>
+                                                    <code>https://</code><em><code>{{ SITE_DOMAIN }}</code></em><code>/api/setStatus?api_key=$api_key&amp;status=$status&amp;id=$id</code>
+                                                </p>
+                                            </blockquote>
+                                        </div>
+                                            <p>
+                                                <strong>Parameters <br></strong>
+                                                $api_key — your API key;<br>
+                                                $id — activation id;<br>
+                                                $status -  activation status;<br>
+                                                3 — wait for the next code on the same number;<br>
+                                                6 — complete activation;<br>
+                                                8 — cancel activation;<br>
+                                            </p>
+                                            <p>
+                                                <strong>Possible mistakes<br></strong>
+                                                NO_ACTIVATION — the activation id does not exist;<br>
+                                                BAD_KEY -  check your API key; <br>
+                                                BAD_STATUS — incorrect status
+                                                EARLY_CANCEL_DENIED - It is possible to cancel the number after 2 minutes following the purchase;<br>
+                                            </p>
+                                      <p><strong>The example of successful answer: <br /></strong></p>
+<pre class="highlight json tab-json" style="font-size: 1.2em;"><code><span class="p">{</span><span class="w">
+<!-- -->  </span><span class="nl">"id"</span><span class="p">:</span><span class="mi">2427</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"phone"</span><span class="p">:</span><span class="s2">"+62895320077478"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"pool"</span><span class="p">:</span><span class="s2">"Charlie"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"product"</span><span class="p">:</span><span class="s2">"Whatsapp"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"price"</span><span class="p">:</span><span class="mi">1954.55</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"status"</span><span class="p">:</span><span class="s2">"Received"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"expires"</span><span class="p">:</span><span class="s2">"2024-08-23 22:11:39"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"sms"</span><span class="p">:</span><span class="kc">null</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"created_at"</span><span class="p">:</span><span class="s2">"2024-08-23 21:51:39"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"country"</span><span class="p">:</span><span class="s2">"Indonesia"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code>
+                                      </pre>
+<p>
+    <strong>Response After Successful Number Cancellation<br></strong>
+    ACCESS_CANCEL - activation canceled</p>
+
+                                      </div>
+                                </div>
+                                </div>
+                                <div class="accordion-item">
+                                <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#get_activation_status" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                                    Get the activation status
+                                  </button>
+                                </h2>
+                                <div id="get_activation_status" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                                  <div class="accordion-body">
+                                          <div class="text-center">
+                                            <blockquote style="font-size: 1.2em;">
+                                                <p>
+                                                    <code>https://</code><em><code>{{ SITE_DOMAIN }}</code></em><code>/api/getStatus?api_key=$api_key&amp;status=$status&amp;id=$id</code>
+                                                </p>
+                                            </blockquote>
+                                        </div>
+                                            <p>
+                                                <strong>Parameters <br></strong>
+                                                $api_key — your API key;<br>
+                                                $id — activation id;<br>
+                                                $status -  activation status;<br>
+                                            </p>
+                                            <p>
+                                                <strong>Possible mistakes<br></strong>
+                                                NO_ACTIVATION — the activation id does not exist;<br>
+                                                BAD_KEY -  check your API key; <br>
+                                            </p>
+                                      <p><strong>The example of successful answer: <br /></strong></p>
+<pre class="highlight json tab-json" style="font-size: 1.2em;"><code><span class="p">{</span><span class="w">
+<!-- -->  </span><span class="nl">"id"</span><span class="p">:</span><span class="mi">2427</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"phone"</span><span class="p">:</span><span class="s2">"+62895320077478"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"pool"</span><span class="p">:</span><span class="s2">"Charlie"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"product"</span><span class="p">:</span><span class="s2">"Whatsapp"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"price"</span><span class="p">:</span><span class="mi">1954.55</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"status"</span><span class="p">:</span><span class="s2">"Received"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"expires"</span><span class="p">:</span><span class="s2">"2024-08-23 22:11:39"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"sms"</span><span class="p">:</span><span class="kc">null</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"created_at"</span><span class="p">:</span><span class="s2">"2024-08-23 21:51:39"</span><span class="p">,</span><span class="w">
+<!-- -->  </span><span class="nl">"country"</span><span class="p">:</span><span class="s2">"Indonesia"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code>
+                                      </pre>
+                                      </div>
+                                </div>
+                                </div>
+                                <div class="accordion-item">
+                                <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#list_services" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                                List of services
+                                </button>
+                                </h2>
+                                <div id="list_services" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                                <div class="accordion-body">
+                                    <div class="text-center">
+                                            <blockquote style="font-size: 1.2em;">
+                                                <p>
+                                                    <code>https://</code><em><code>{{ SITE_DOMAIN }}</code></em><code>/api/get_services?api_key=$api_key</code>
+                                                </p>
+                                            </blockquote>
+                                        </div>
+                                    <p>
+                                        <strong>Parameters <br></strong>
+                                        $api_key — your API key;<br>
+                                    </p>
+                                    <p>
+                                        <strong>Possible mistakes<br></strong>
+                                        BAD_KEY -  check your API key; <br>
+
+                                    </p>
+                                      <p><strong>ANSWER <br /></strong> JSON - object in format</p>
+<pre style="font-size: 1.2em;">
+    <span>{
+        {
+            ''name'':<a><strong>name</strong></a>,
+            ''serviceCode'':<a><strong>serviceCode</strong></a>,
+        }
+    }</span>
+</pre>
+                                </div>
+                                </div>
+                                </div>
+                                <div class="accordion-item">
+                                <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#list_countries" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                                    List of countries
+                                  </button>
+                                </h2>
+                                <div id="list_countries" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                                  <div class="accordion-body">
+                                        <div class="text-center">
+                                            <blockquote style="font-size: 1.2em;">
+                                                <p>
+                                                    <code>https://</code><em><code>{{ SITE_DOMAIN }}</code></em><code>/api/get_countries?api_key=$api_key</code>
+                                                </p>
+                                            </blockquote>
+                                        </div>
+                                        <p>
+                                            <strong>Parameters <br></strong>
+                                            $api_key — your API key;<br>
+                                        </p>
+                                        <p>
+                                            <strong>Possible mistakes<br></strong>
+                                            BAD_KEY -  check your API key; <br>
+                                        </p>
+                                      <p><strong>ANSWER <br /></strong> JSON - object in format</p>
+  <pre style="font-size: 1.2em;">
+    <span>{
+        {
+            ''CountryCode'':<a><strong>CountryCode</strong></a>,
+            ''country'':<a><strong>country</strong></a>,
+        }
+    }</span>
+</pre>
+                                  </div>
+                                </div>
+                                </div>
+                                <div class="accordion-item">
+                                <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#get_price" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                                    Get current prices by country and service
+                                  </button>
+                                </h2>
+                                <div id="get_price" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                                  <div class="accordion-body">
+                                        <div class="text-center">
+                                            <blockquote style="font-size: 1.2em;">
+                                                <p>
+                                                    <code>https://</code><em><code>{{ SITE_DOMAIN }}</code></em><code>/api/getPrices?api_key=$api_key&amp;service=$service&amp;country=$country</code>
+                                                </p>
+                                            </blockquote>
+                                        </div>
+                                    <p>
+                                        <strong>Parameters <br></strong>
+                                        $api_key — your API key;<br>
+                                        $service - name of the service <br>
+                                        $country - code name <br>
+                                    </p>
+                                    <p>
+                                        <strong>Possible mistakes<br></strong>
+                                        BAD_KEY -  check your API key; <br>
+                                    </p>
+                                      <p><strong>ANSWER <br /></strong> JSON - object in format</p>
+                                      <pre style="font-size: 1.2em;">
+    <span>{
+        ''<a><strong>Country</strong></a>'':
+            {''<a><strong>Service</strong></a>'':
+                {
+                    ''order_amount'':<a><strong>order_amount</strong></a>,
+                    ''pool'':<a><strong>pool</strong></a>,
+                    ''success_rate'':<a><strong>success_rate</strong></a>,
+                }
+            }
+    }</span>
+</pre>
+                                  </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+{% endblock %}
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- datatable Js -->
+    <script src="/static/assets/js/plugins/dataTables.min.js"></script>
+    <script src="/static/assets/js/plugins/dataTables.bootstrap5.min.js"></script>
+    <script>
+		document.addEventListener("DOMContentLoaded", function() {
+            const hash = window.location.hash;
+              if (hash) {
+                $('a[href="' + hash + '"]').tab('show');
+              }
+            // Password Toggle Functionality
+          $('.password-toggle').click(function() {
+              const $input = $(this).parents('.input-group').find('input');
+              const $icon = $(this).find('i');
+
+              $(this).toggleClass('active');
+            if ($(this).hasClass('active')) {
+              $input.attr('type', 'text');
+              $icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            } else {
+              $input.attr('type', 'password');
+              $icon.removeClass('fa-eye').addClass('fa-eye-slash');
+            }
+          });
+          // Notification setup
+            const notyf = new Notyf({
+              duration: 1000,
+              position: { x: 'right', y: 'top' },
+              types: [
+                  {
+                      type: "warning",
+                        backgroundColor: "#ffc107",
+                        icon: {
+                            className: "notyf__icon--error",
+                            tagName: "i"
+                        }
+                  }
+              ]
+            });
+          // Change Password Form Handling
+          $('#change_pwd').click(function() {
+                const button = document.getElementById("change_pwd");
+                button.disabled = true; // Disable button on click
+
+                const currentPwd = $("#current_pwd").val().trim();
+                const newPwd = $("#pwd").val().trim();
+                const confirmPwd = $("#confirm_pwd").val().trim();
+
+                // Check if passwords match
+                if (newPwd !== confirmPwd) {
+                    notyf.error({ message: "Passwords don't match!", duration: 3000 });
+                    button.disabled = false;
+                    return;
+                }
+
+                // Check if fields are empty
+                if (!currentPwd || !newPwd) {
+                    notyf.error({ message: "All fields are required!", duration: 3000 });
+                    button.disabled = false;
+                    return;
+                }
+
+                $.ajax({
+                    url: '/change_password', // Match your backend route
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        'current_password': currentPwd,
+                        'new_password': newPwd // Match backend expectation
+                    }),
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $("#current_pwd").val("");
+                            $("#pwd").val("");
+                            $("#confirm_pwd").val("");
+                            notyf.success({ message: "Password changed successfully!", duration: 3000 });
+                        } else if (response.status === 'Incorrect Password') {
+                            notyf.error({ message: "Incorrect current password!", duration: 3000 });
+                        } else {
+                            notyf.error({ message: "Failed to change password: Unknown error", duration: 3000 });
+                        }
+                        button.disabled = false; // Re-enable button after response
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', error);
+                        notyf.error({ message: "An error occurred while changing password", duration: 3000 });
+                        button.disabled = false; // Re-enable on AJAX error
+                    }
+                });
+            });
+          // Update API key Handling
+          $('#apiKey').click(function(){
+              document.getElementById("apiKey").disabled = true;
+              $.ajax({
+                  url: '/api_update',
+                  method: 'GET',
+                  contentType: 'application/json',
+                  dataType: 'json',
+                  success: function(response) {
+                    if (response['status'] === 'success'){
+                         document.getElementById('apiKey_span').textContent = response['apikey'];
+                        document.getElementById("apiKey").disabled = false;
+                        notyf.success({ message: "API Updated Successfully!", duration: 3000});
+                    }
+                  },
+                  error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                  }
+              });
+          });
+        });
+	</script>
+{% endblock %}

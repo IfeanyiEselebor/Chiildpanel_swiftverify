@@ -1,0 +1,171 @@
+{
+  "nav": {
+    "main": {
+      "qm": "Quick Menu",
+      "qo": "Quick Order",
+      "m": "Main",
+      "d": "Dashboard",
+      "o": "Order",
+      "r": "Rent",
+      "p": "Residential Proxy"
+    },
+    "blog": {
+      "t": "Information",
+      "knowledgebase": "Knowledgebase",
+      "all_articles": "Articles",
+      "i_t": "Important articles",
+      "api": "API instructions"
+    },
+    "tools": {
+      "t": "Tools",
+      "lookup": "Free Carrier Lookup",
+      "free_sms": "Free SMS verifications"
+    },
+    "balance": {
+      "b": "Balance",
+      "d": "Deposit",
+      "r": "Rewards"
+    },
+    "contact": {
+      "c": "Contact",
+      "d": "Confused what something means, have advice or can't get something to work? Feel free to contact us!",
+      "s": "Support",
+      "t": "Tickets"
+    },
+    "referral": {
+      "c": "Affiliates",
+      "s": "My Referrals"
+    },
+    "instructions": {
+      "i": "Instructions",
+      "a": "SMSPool API",
+      "o": "How to order an SMS",
+      "b": "SMSPool Guides"
+    },
+    "top": {
+      "h": "History",
+      "s": "Settings",
+      "l": "Log out"
+    }
+  },
+  "cards": {
+    "news": "News",
+    "order_statistics": "Order statistics",
+    "u": "Username",
+    "b": "Balance",
+    "s": "Spent",
+    "d": "Deposited",
+    "v": "Verifications",
+    "r": "Rented",
+    "p": "Phone number",
+    "affiliate": {
+      "e": "total earnings",
+      "t": "total registers",
+      "r": "registered today"
+    },
+    "active": "status",
+    "usage_graph": "Usage graph"
+  },
+  "news": {
+    "n": "News"
+  },
+  "order": {
+    "sms": {
+      "o": "Order SMS",
+      "d": "Order your SMS here, then have a look at your pending SMS to see your current order. If the service is not listed, feel free to contact support or use the \"Not Listed\" service. Looking to buy in bulk and think the price is a bit too steep? Feel free to open a ticket for possible bulk discounts! Keep in mind that these are <b>temporary</b> SMS and are usually used for one-time verifications.",
+      "country": "Country",
+      "service": "Service",
+      "quantity": "Quantity",
+      "max_price": "Maximum price",
+      "price": "Price range",
+      "stock": "Stock",
+      "pricing_option": {
+        "tag": "Pricing option",
+        "cheapest": "Select cheapest",
+        "highest_success": "Select highest success rate"
+      },
+      "quick_purchase": "Quick Purchase",
+      "lowest_price_text": "This is the price range, for a guaranteed price feel free to use the advanced view to select a pool to get a more specific price.",
+      "advanced_view":{
+        "tag": "Advanced view",
+        "desc": "View our advanced view, which shows success rate, pricing and all the information you need!",
+        "pool": "Pool",
+        "success_rate": "Success rate"
+      }
+    },
+    "qsms": {
+      "o": "Quick Order SMS",
+      "d": "Select a service you would like to order a SMS verification for, then our system will automatically suggest the best options. <a href=\"#pending\">Press here to go down to your active orders</a>. Keep in mind that these are <b>temporary</b> SMS and are usually used for one-time verifications.",
+      "search_country": "Search results"
+    },
+    "pending": {
+      "title": "Pending SMS",
+      "archive_all": "Archive all active orders",
+      "cancel_all": "Cancel all active orders",
+      "desc": "A list of all your pending SMS, need more instructions on how to use it? Press on <strong>Useful tips</strong>. Sometimes a phone number has to be activated, this could mean it can take up to 3 minutes to receive an SMS verification. Looking for your archived orders? <a href='/my/history'>press here</a> to see all your orders.",
+      "phonenumber": "Phonenumber",
+      "code": "Code",
+      "status": "Status",
+      "cost": "Cost",
+      "actions": "Actions"
+    }
+  },
+  "rent":{
+    "title": "Phone number rentals"
+  },
+  "deposit": {
+    "title": "Deposit",
+    "text": "<b>All Stripe payments are processed by our trusted payment processor Stripe, we do not store, nor keep any of your creditcard information on our servers.</b> Top up your account here, crypto payments need at least 3 confirmations before it's credited to your account. Creditcard deposits will be deposited instantly, if it has not deposited within 20 minutes feel free to contact <a href=/support/contact>support</a>, if your crypto payment hasn't credited within 24 hours please contact support. If the service wasn't suitable for your needs, you can request a refund within 14 days as long as your balance has not been used, refunds are only possible to the original payment method.",
+    "history": {
+      "title": "My deposits",
+      "text": "A list of all your previous deposits."
+    },
+    "promotioncode":{
+      "title": "Promotion code",
+      "text": "Found a promotion code? Redeem it here!"
+    }
+  },
+  "settings": {
+    "d": "Settings",
+    "de": "Configure your settings here, such as changing your e-mail or changing your password."
+  },
+  "contact": {
+    "c": "Support Center",
+    "d": "Confused what something means, have advice or can't get something to work? Feel free to contact us!",
+    "s": "Support",
+    "t": "Tickets"
+  },
+  "rewards": {
+    "title": "Rewards",
+    "text": "Complete the offers below in order to get free balance, after a offer is done you will receive your balance upto 24 hours, remember this is a third party service we have no control over these offers and can only process things which has been reported by our reward network (AdGate) if you run into any issues we suggest contacting them instead of our support."
+  },
+  "history": {
+    "title": "History",
+    "description": "View your previous orders here."
+  },
+  "auth":{
+    "login": "Login",
+    "credentials": "Your credentials",
+    "username": "Username",
+    "password": "Passwords",
+    "repeat_password": "Repeat Password",
+    "switch": "Switch to",
+    "sign_in": "Sign in",
+    "forgot_password": "Forgot password?",
+    "other_services": "Log in with other services",
+    "login_telegram": "Log in with Telegram",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign up",
+    "tos": "By continuing, you're confirming that you've read our <a href=\"tos\">Terms &amp; Conditions</a> and <a href=\"/privacy-policy\">Privacy Policy</a>",
+    "register": "Register",
+    "register_desc": "The e-mail field is optional, but required for password resets.",
+    "quick_register": "Quick register",
+    "register_telegram": "One-click register with Telegram",
+    "your_credentials": "Your credentials",
+    "optional_fields": "Optional fields",
+    "optional_fields_desc": "You will not be able to recover your account if you do not fill in an e-mail",
+    "email": "E-mail (optional)",
+    "affiliate_code": "Affiliate code (optional)",
+    "additions": "Additions"
+  }
+}

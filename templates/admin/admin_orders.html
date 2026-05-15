@@ -1,0 +1,185 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Orders{% endblock %}
+{% block head %}
+      <!-- DataTables -->
+  <link rel="stylesheet" href="/static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Notyf CSS File -->
+    <link rel="stylesheet" type="text/css" href="/static/plugins/notyf/notyf.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <style>
+        .dtr-data {
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .order-btn {
+          display: inline-flex;
+          -webkit-box-align: center;
+          align-items: center;
+          -webkit-box-pack: center;
+          justify-content: center;
+          position: relative;
+          box-sizing: border-box;
+          -webkit-tap-highlight-color: transparent;
+          background-color: transparent;
+          outline: 0px;
+          margin: 0px;
+          cursor: pointer;
+          user-select: none;
+          vertical-align: middle;
+          appearance: none;
+          text-decoration: none;
+          text-align: center;
+          flex: 0 0 auto;
+          font-size: 1.5rem;
+          overflow: visible;
+          color: rgba(0, 0, 0, 0.54);
+          transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+          padding: 6px;
+          border-radius: 12px;
+          box-shadow: none;
+          border: 2px solid rgb(186, 220, 250);
+        }
+        .order-btn-i {
+          user-select: none;
+          width: 1em;
+          height: 1em;
+          display: inline-block;
+          fill: currentcolor;
+          flex-shrink: 0;
+          transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+          font-size: 24px;
+        }
+    </style>
+{% endblock %}
+{% block main_content %}
+    <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12">
+                    <table class="table table-bordered datatable display responsive nowrap" id="orders" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th scope="col"><b>ID</b></th>
+                            <th scope="col" data-type="date" data-format="YYYY/DD/MM">Date</th>
+                            <th scope="col">Service</th>
+                            <th scope="col">Country</th>
+                            <th scope="col">Number</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Price</th>
+                            <th scope="col" >Status</th>
+                            <th scope="col"> Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                  <!-- /.top-selling -->
+                  </div>
+                  <!-- /.col -->
+                </div>
+                <!-- /.row -->
+              </div>
+              <!-- ./card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+    <!-- /.row -->
+{% endblock %}
+{% block script %}
+    <!-- Datatables JS File -->
+    <script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <!-- Notyf JS File -->
+    <script src="/static/plugins/notyf/notyf.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const table = $('#orders').DataTable({
+        responsive: true,
+        serverSide: true,
+        ajax: {
+            type: "GET",
+            url: '/admin_orders',
+            data: function(d) {
+                return $.extend({}, d, {
+                    "draw": d.draw,
+                    "start": d.start,
+                    "length": d.length
+                });
+            },
+            dataSrc: function (json) {
+                if (json === "Login Required") {
+                    location.reload();
+                } else {
+                    return json.data;
+                }
+            }
+        },
+        columns: [
+            {data: 'id'},
+            {data: 'date'},
+            {data: 'service'},
+            {data: 'country'},
+            {data: 'Number'},
+            {data: 'Code'},
+            {data: 'amount'},
+            {data: 'status'},
+            {data: 'action'}
+        ],
+        order: [[1, "desc"]],
+        columnDefs: [
+            {targets: [7], className: "dt-center"}
+        ]
+    });
+    // Notification setup
+    const notyf = new Notyf({
+      duration: 1000,
+      position: { x: 'right', y: 'top' },
+      types: [
+          {
+              type: "warning",
+                backgroundColor: "#ffc107",
+                icon: {
+                    className: "notyf__icon--error",
+                    tagName: "i"
+                }
+          }
+      ]
+    });
+    // Use event delegation for dynamically added cancel buttons
+    $(document).on('click', '.cancel-order', function() {
+    var orderId = $(this).data('order_no');
+    if (confirm('Are you sure you want to cancel this order?')) {
+        $.ajax({
+            url: '/admin/cancel_order',  // You'll need to create this route
+            method: 'POST',
+            data: JSON.stringify({'order_no': orderId}),
+            contentType: 'application/json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    notyf.success({message: "Order cancelled successfully!", duration: 3000});
+                    setTimeout(() => {
+                        table.ajax.reload()
+                    }, 3500);
+                }
+            },
+            error: function() {
+                alert('An error occurred while trying to cancel the order');
+            }
+        });
+        }
+    });
+    });
+    </script>
+{% endblock %}
